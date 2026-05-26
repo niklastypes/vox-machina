@@ -2,7 +2,7 @@
 
 Local voice transcription with speaker diarization and LLM-powered summarization.
 
-Drop in audio, get structured meeting notes. Runs entirely on your machine with no cloud APIs, no gated models, no tokens.
+Drop in audio, get structured meeting notes. Runs entirely on your machine, no cloud APIs at runtime.
 
 ## How It Works
 
@@ -37,7 +37,24 @@ uv sync --all-extras
 uv run pre-commit install
 ```
 
-Then enable release-please: go to **Settings > Actions > General > Workflow permissions** and check **Allow GitHub Actions to create and approve pull requests**.
+### Speaker diarization model
+
+Speaker diarization uses [pyannote/speaker-diarization-community-1](https://huggingface.co/pyannote/speaker-diarization-community-1) (CC-BY-4.0). The model runs fully locally, but requires a one-time HuggingFace login to download:
+
+1. Create a free account at [huggingface.co](https://huggingface.co/join)
+2. Accept the model terms at [pyannote/speaker-diarization-community-1](https://huggingface.co/pyannote/speaker-diarization-community-1)
+3. Create a **Read** access token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+4. Log in locally:
+
+```bash
+uv run hf auth login
+```
+
+If you skip this step, transcription still works but without speaker labels.
+
+### Release-please
+
+To enable automated releases: go to **Settings > Actions > General > Workflow permissions** and check **Allow GitHub Actions to create and approve pull requests**.
 
 ## Development
 

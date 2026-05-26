@@ -4,7 +4,7 @@
 
 ## Core Identity
 
-vox-machina is a CLI tool that runs entirely on your machine. It transcribes audio files, identifies who said what, and optionally summarizes the result using a local Ollama model. No cloud APIs, no gated models, no tokens. The CLI command is `vox`.
+vox-machina is a CLI tool that runs entirely on your machine. It transcribes audio files, identifies who said what, and optionally summarizes the result using a local Ollama model. No cloud APIs at runtime. The CLI command is `vox`.
 
 It is NOT a real-time transcription tool, not a GUI app, and not a cloud service wrapper.
 
