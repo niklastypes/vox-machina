@@ -8,4 +8,3 @@ project_description: 🦻 Local voice transcription with speaker diarization and
     summarization
 project_name: vox-machina
 python_version: '3.13'
-
