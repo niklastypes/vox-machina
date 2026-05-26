@@ -10,7 +10,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from vox_machina.models import TranscriptSegment
 
 
-def _convert_to_wav(audio_path: str) -> str | None:
+def convert_to_wav(audio_path: str) -> str | None:
     """Convert audio to 16kHz mono wav using system ffmpeg.
 
     Returns path to temp wav file, or None if the input is already wav.
@@ -53,29 +53,22 @@ def transcribe_audio(
     model_size: str = "large-v3",
 ) -> tuple[list[TranscriptSegment], float]:
     """Transcribe audio file and return segments with total duration."""
-    tmp_wav = _convert_to_wav(audio_path)
-    path_to_transcribe = tmp_wav or audio_path
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[bold blue]Loading whisper model..."),
+    ) as progress:
+        progress.add_task("loading", total=None)
+        model = WhisperModel(model_size, device="cpu", compute_type="int8")
 
-    try:
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[bold blue]Loading whisper model..."),
-        ) as progress:
-            progress.add_task("loading", total=None)
-            model = WhisperModel(model_size, device="cpu", compute_type="int8")
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[bold blue]Transcribing audio..."),
+    ) as progress:
+        progress.add_task("transcribing", total=None)
+        raw_segments, info = model.transcribe(audio_path, beam_size=5)
+        segments = [
+            TranscriptSegment(start=seg.start, end=seg.end, text=seg.text.strip())
+            for seg in raw_segments
+        ]
 
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[bold blue]Transcribing audio..."),
-        ) as progress:
-            progress.add_task("transcribing", total=None)
-            raw_segments, info = model.transcribe(path_to_transcribe, beam_size=5)
-            segments = [
-                TranscriptSegment(start=seg.start, end=seg.end, text=seg.text.strip())
-                for seg in raw_segments
-            ]
-
-        return segments, info.duration
-    finally:
-        if tmp_wav:
-            Path(tmp_wav).unlink(missing_ok=True)
+    return segments, info.duration

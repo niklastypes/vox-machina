@@ -9,9 +9,11 @@ from vox_machina.cli import app
 runner = CliRunner()
 
 
+@patch("vox_machina.cli.diarize_audio")
 @patch("vox_machina.cli.transcribe_audio")
 def test_transcribe_command_creates_md_file(
     mock_transcribe: MagicMock,
+    mock_diarize: MagicMock,
     tmp_path: Path,
 ) -> None:
     from vox_machina.models import TranscriptSegment
@@ -23,6 +25,7 @@ def test_transcribe_command_creates_md_file(
         [TranscriptSegment(start=0.0, end=2.0, text="Hello world")],
         10.0,
     )
+    mock_diarize.return_value = []
 
     result = runner.invoke(app, [str(audio_file)])
 
@@ -31,3 +34,35 @@ def test_transcribe_command_creates_md_file(
     assert output_file.exists()
     content = output_file.read_text()
     assert "Hello world" in content
+
+
+@patch("vox_machina.cli.diarize_audio")
+@patch("vox_machina.cli.transcribe_audio")
+def test_transcribe_command_with_diarization(
+    mock_transcribe: MagicMock,
+    mock_diarize: MagicMock,
+    tmp_path: Path,
+) -> None:
+    from vox_machina.models import SpeakerSegment, TranscriptSegment
+
+    audio_file = tmp_path / "meeting.wav"
+    audio_file.touch()
+
+    mock_transcribe.return_value = (
+        [
+            TranscriptSegment(start=0.0, end=2.0, text="Hello"),
+            TranscriptSegment(start=2.0, end=4.0, text="Hi there"),
+        ],
+        10.0,
+    )
+    mock_diarize.return_value = [
+        SpeakerSegment(start=0.0, end=2.5, speaker="SPEAKER_00"),
+        SpeakerSegment(start=2.5, end=5.0, speaker="SPEAKER_01"),
+    ]
+
+    result = runner.invoke(app, [str(audio_file)])
+
+    assert result.exit_code == 0
+    content = (tmp_path / "meeting.md").read_text()
+    assert "SPEAKER_00" in content
+    assert "SPEAKER_01" in content
