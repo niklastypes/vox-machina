@@ -17,12 +17,10 @@ It is NOT a real-time transcription tool, not a GUI app, and not a cloud service
 | Format | `uv run ruff format src/ tests/` |
 | Type check | `uv run ty check src/ tests/` |
 
-## Intended Workflow
+## Current Workflow
 
 ```
-vox meeting.m4a                    # transcribe with speaker labels
-vox rename meeting.md              # interactively assign real names
-vox summarize meeting.md           # produce structured meeting notes
+vox meeting.m4a                    # transcribe to timestamped markdown
 ```
 
 ## Design Decisions
@@ -30,12 +28,8 @@ vox summarize meeting.md           # produce structured meeting notes
 | Decision | Choice | Why |
 |----------|--------|-----|
 | Transcription engine | faster-whisper (CTranslate2) | Best local accuracy, good Python API |
-| Diarization | speechbrain | Fully open models, no HuggingFace token required |
-| Summarization | Ollama (local) | Keeps everything local, user controls model choice |
-| CLI framework | typer + rich + questionary | Clean CLI with interactive prompts where useful |
-| Audio handling | torchaudio | Handles format conversion (m4a, mp3, wav) reliably |
+| CLI framework | typer + rich | Clean CLI with good UX |
 | Output format | Markdown only | Simple, readable, feeds into downstream tools |
-| Prompt templates | `.md` files with `{transcript}` placeholder | Easy to customize, version-controllable |
 
 ## Python Standards
 
@@ -75,28 +69,16 @@ vox summarize meeting.md           # produce structured meeting notes
 ## Project Layout
 
 ```
-vox-machina/
-├── src/vox_machina/
-│   ├── cli.py              # typer app: main, rename, summarize commands
-│   ├── models.py           # pydantic models: TranscriptSegment, SpeakerSegment, MergedSegment
-│   ├── transcribe.py       # faster-whisper wrapper
-│   ├── diarize.py          # speechbrain diarization
-│   ├── merge.py            # align transcription with speaker segments
-│   ├── format.py           # render to markdown
-│   ├── rename.py           # speaker label extraction and replacement
-│   ├── summarize.py        # Ollama summarization + context window check
-│   ├── banner.py           # ASCII art banner
-│   └── prompts/
-│       ├── meeting_notes.md
-│       ├── standup.md
-│       └── interview.md
-└── tests/
-    ├── test_models.py
-    ├── test_merge.py
-    ├── test_format.py
-    ├── test_rename.py
-    ├── test_summarize.py
-    └── test_cli.py
+src/vox_machina/
+├── cli.py              # typer app: transcribe command
+├── models.py           # pydantic models: TranscriptSegment
+├── transcribe.py       # faster-whisper wrapper
+└── format.py           # render segments to markdown
+
+tests/
+├── test_cli.py
+├── test_models.py
+└── test_format.py
 ```
 
 ## Related Documents

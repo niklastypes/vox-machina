@@ -7,14 +7,12 @@ Drop in audio, get structured meeting notes. Runs entirely on your machine with 
 ## How It Works
 
 ```
-vox meeting.m4a                    # transcribe with speaker labels
-vox rename meeting.md              # interactively assign real names
-vox summarize meeting.md           # produce structured meeting notes
+vox meeting.m4a                    # transcribe to timestamped markdown
 ```
 
 ## Tech Stack
 
-Python 3.13, faster-whisper, speechbrain, torchaudio, Ollama, typer, Pydantic, rich, questionary
+Python 3.13, faster-whisper, typer, Pydantic, rich
 
 ## Roadmap
 
