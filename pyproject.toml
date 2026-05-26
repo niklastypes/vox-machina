@@ -12,7 +12,11 @@ dependencies = [
     "pydantic>=2.0.0",
     "faster-whisper>=1.1.0",
     "rich>=13.0.0",
+    "typer>=0.15.0",
 ]
+
+[project.scripts]
+vox = "vox_machina.cli:app"
 
 [project.urls]
 Homepage = "https://github.com/niklastypes/vox-machina"
