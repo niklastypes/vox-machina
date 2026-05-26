@@ -20,7 +20,7 @@ It is NOT a real-time transcription tool, not a GUI app, and not a cloud service
 ## Current Workflow
 
 ```
-vox meeting.m4a                    # transcribe to timestamped markdown
+vox meeting.m4a                    # transcribe with speaker labels
 ```
 
 ## Design Decisions
@@ -28,6 +28,7 @@ vox meeting.m4a                    # transcribe to timestamped markdown
 | Decision | Choice | Why |
 |----------|--------|-----|
 | Transcription engine | faster-whisper (CTranslate2) | Best local accuracy, good Python API |
+| Diarization | pyannote.audio (community-1) | Fully open model, no HuggingFace token required |
 | CLI framework | typer + rich | Clean CLI with good UX |
 | Output format | Markdown only | Simple, readable, feeds into downstream tools |
 
@@ -71,13 +72,16 @@ vox meeting.m4a                    # transcribe to timestamped markdown
 ```
 src/vox_machina/
 ├── cli.py              # typer app: transcribe command
-├── models.py           # pydantic models: TranscriptSegment
-├── transcribe.py       # faster-whisper wrapper
-└── format.py           # render segments to markdown
+├── models.py           # pydantic models: TranscriptSegment, SpeakerSegment, MergedSegment
+├── transcribe.py       # faster-whisper wrapper (ffmpeg conversion for non-wav)
+├── diarize.py          # pyannote speaker diarization
+├── merge.py            # align transcript segments with speaker segments
+└── format.py           # render merged segments to markdown with speaker labels
 
 tests/
 ├── test_cli.py
 ├── test_models.py
+├── test_merge.py
 └── test_format.py
 ```
 
