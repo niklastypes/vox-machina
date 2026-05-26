@@ -26,6 +26,10 @@ Python 3.13, faster-whisper, typer, Pydantic, rich
 | Summaries+ | v0.6.0 | Multiple prompt templates + chunked summarization for long recordings |
 | Obsidian | v0.7.0 | Obsidian-ready output with frontmatter, tags, wikilinks |
 
+## Prerequisites
+
+- **ffmpeg** is required for decoding audio formats (m4a, aac, mp3, etc.): `brew install ffmpeg`
+
 ## Setup
 
 ```bash
