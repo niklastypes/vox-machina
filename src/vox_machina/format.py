@@ -34,6 +34,12 @@ def _group_consecutive_speakers(
     return groups
 
 
+def _is_multi_speaker(segments: list[MergedSegment]) -> bool:
+    speakers = {seg.speaker for seg in segments}
+    speakers.discard("UNKNOWN")
+    return len(speakers) > 1
+
+
 def format_transcript_with_speakers(
     segments: list[MergedSegment],
     source_filename: str,
@@ -48,11 +54,17 @@ def format_transcript_with_speakers(
         "---",
     ]
 
-    grouped = _group_consecutive_speakers(segments)
-    for speaker, start, text in grouped:
-        lines.append("")
-        lines.append(f"**{speaker}** ({_format_time(start)})")
-        lines.append(text)
+    if _is_multi_speaker(segments):
+        grouped = _group_consecutive_speakers(segments)
+        for speaker, start, text in grouped:
+            lines.append("")
+            lines.append(f"**{speaker}** ({_format_time(start)})")
+            lines.append(text)
+    else:
+        for seg in segments:
+            lines.append("")
+            lines.append(f"({_format_time(seg.start)})")
+            lines.append(seg.text)
 
     lines.append("")
     return "\n".join(lines)
