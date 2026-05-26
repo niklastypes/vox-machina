@@ -1,6 +1,32 @@
-# vox-machina
+# 🦻 Vox Machina
 
-> 🦻 Local voice transcription with speaker diarization and LLM-powered summarization
+Local voice transcription with speaker diarization and LLM-powered summarization.
+
+Drop in audio, get structured meeting notes. Runs entirely on your machine with no cloud APIs, no gated models, no tokens.
+
+## How It Works
+
+```
+vox meeting.m4a                    # transcribe with speaker labels
+vox rename meeting.md              # interactively assign real names
+vox summarize meeting.md           # produce structured meeting notes
+```
+
+## Tech Stack
+
+Python 3.13, faster-whisper, speechbrain, torchaudio, Ollama, typer, Pydantic, rich, questionary
+
+## Roadmap
+
+| Stage | Version | What it delivers |
+|-------|---------|-----------------|
+| Skateboard | v0.1.0 | `vox file.m4a` produces timestamped transcript |
+| Scooter | v0.2.0 | Adds speaker diarization (SPEAKER_00, SPEAKER_01, ...) |
+| Bicycle | v0.3.0 | `vox rename` for interactive speaker label replacement |
+| Motorcycle | v0.4.0 | `vox summarize` via local Ollama with prompt templates |
+| Polish | v0.5.0 | ASCII banner, polished rich UX throughout |
+| Summaries+ | v0.6.0 | Multiple prompt templates + chunked summarization for long recordings |
+| Obsidian | v0.7.0 | Obsidian-ready output with frontmatter, tags, wikilinks |
 
 ## Setup
 
@@ -9,7 +35,7 @@ uv sync --all-extras
 uv run pre-commit install
 ```
 
-Then enable release-please: go to **Settings → Actions → General → Workflow permissions** and check **Allow GitHub Actions to create and approve pull requests**.
+Then enable release-please: go to **Settings > Actions > General > Workflow permissions** and check **Allow GitHub Actions to create and approve pull requests**.
 
 ## Development
 
