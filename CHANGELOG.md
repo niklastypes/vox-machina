@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.3.0](https://github.com/niklastypes/vox-machina/compare/v0.2.0...v0.3.0) (2026-05-26)
+
+
+### Features
+
+* add merge logic to align transcripts with speaker segments ([64cac45](https://github.com/niklastypes/vox-machina/commit/64cac4567fa9913af823c5e18b36b12a78177616))
+* add pyannote speaker diarization module ([dfc83f6](https://github.com/niklastypes/vox-machina/commit/dfc83f6c1323e6971324f1a91ed19886b63e0aa0))
+* add speaker-aware markdown formatting with grouping ([2f8ab29](https://github.com/niklastypes/vox-machina/commit/2f8ab298090669ed761a8a451da89ca565042a5c))
+* add SpeakerSegment and MergedSegment models ([87ac440](https://github.com/niklastypes/vox-machina/commit/87ac4407db60cc453b95b579697e9312ff3705f7))
+* integrate speaker diarization into transcription pipeline ([d89d5a6](https://github.com/niklastypes/vox-machina/commit/d89d5a6809d91bcea56db5724b350c770f6155f8))
+
+
+### Bug Fixes
+
+* use per-segment timestamps for single-speaker transcripts ([ac773f5](https://github.com/niklastypes/vox-machina/commit/ac773f5ec0a28935e6166b169a640750c24aa93f))
+
+
+### Documentation
+
+* add HuggingFace setup instructions for diarization model ([3c4c1b1](https://github.com/niklastypes/vox-machina/commit/3c4c1b111255c1d01078c3ccd9e68ef32e08857b))
+* update README.md, CLAUDE.md and roadmap for v0.2.0 ([9b537fc](https://github.com/niklastypes/vox-machina/commit/9b537fc01e4eace40d1cd85230aa68d5b5383dad))
+
 ## [0.2.0](https://github.com/niklastypes/vox-machina/compare/v0.1.0...v0.2.0) (2026-05-26)
 
 
