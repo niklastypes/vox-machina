@@ -1,0 +1,11 @@
+{
+  "bump-minor-pre-major": true,
+  "packages": {
+    ".": {
+      "release-type": "python",
+      "extra-files": [
+        "src/vox_machina/__init__.py"
+      ]
+    }
+  }
+}
