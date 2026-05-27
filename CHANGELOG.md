@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.7.0](https://github.com/niklastypes/vox-machina/compare/v0.6.0...v0.7.0) (2026-05-27)
+
+
+### Features
+
+* split CLI into vox and machina entry points ([e76423d](https://github.com/niklastypes/vox-machina/commit/e76423dd4707e3b3ecc1be8017ddfefce77f08b9))
+
+
+### Documentation
+
+* add responsible use disclaimer to README ([ab91e03](https://github.com/niklastypes/vox-machina/commit/ab91e031b730c660865299765cecf1008dede987))
+* add retro prompt, prepare command, and progress bars to roadmap ([784d01f](https://github.com/niklastypes/vox-machina/commit/784d01f0478576f82234a2645e215e401fbb0d26))
+* update README.md and CLAUDE.md for v0.7.0 ([9f49096](https://github.com/niklastypes/vox-machina/commit/9f490965a5c791f1df4c7820149477c8c8f90bd4))
+
 ## [0.6.0](https://github.com/niklastypes/vox-machina/compare/v0.5.0...v0.6.0) (2026-05-27)
 
 
