@@ -112,7 +112,11 @@ def rename(
     transcript = file.read_text()
 
     if speakers:
-        mapping = parse_speaker_mapping(speakers)
+        try:
+            mapping = parse_speaker_mapping(speakers)
+        except ValueError as e:
+            console.print(f"[red]Error: {e}[/red]")
+            raise typer.Exit(1) from None
     else:
         detected = extract_speakers(transcript)
         if not detected:
@@ -121,10 +125,14 @@ def rename(
 
         all_quotes = extract_quotes(transcript, detected)
         mapping = {}
-        for speaker in detected:
-            name = _prompt_for_speaker_name(speaker, all_quotes.get(speaker, []))
-            if name:
-                mapping[speaker] = name
+        try:
+            for speaker in detected:
+                name = _prompt_for_speaker_name(speaker, all_quotes.get(speaker, []))
+                if name:
+                    mapping[speaker] = name
+        except KeyboardInterrupt:
+            console.print("\n[yellow]Cancelled.[/yellow]")
+            raise typer.Exit(0) from None
 
     result = rename_speakers(transcript, mapping)
     output_path = output or file
