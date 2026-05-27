@@ -6,16 +6,28 @@ Drop in audio, get structured meeting notes. Runs entirely on your machine, no c
 
 ## How It Works
 
-```
-vox transcribe meeting.m4a         # transcribe with speaker labels
-machina label meeting.md           # interactively assign real names
-machina summarize meeting.md       # produce structured meeting notes
-vox config / machina config        # configure default models
-```
+Two CLI entry points, split by domain:
+
+### `vox` - voice and audio
+
+| Command | What it does |
+|---------|-------------|
+| `vox transcribe meeting.m4a` | Transcribe with speaker diarization |
+| `vox transcribe meeting.m4a --language de` | Force language (auto-detects if omitted) |
+| `vox config` | Configure default models |
+| `vox prepare` | Download all required models |
+
+### `machina` - text processing and AI
+
+| Command | What it does |
+|---------|-------------|
+| `machina label meeting.md` | Interactively assign real names to speakers |
+| `machina summarize meeting.md` | Summarize (picks prompt interactively) |
+| `machina summarize meeting.md --prompt retro` | Summarize with a specific prompt template |
 
 ## Tech Stack
 
-Python 3.13, faster-whisper, pyannote.audio, Ollama, typer, Pydantic, rich, questionary
+Python 3.13, faster-whisper, pyannote.audio, Ollama, typer, Pydantic, rich, questionary, Jinja2
 
 ## Prerequisites
 

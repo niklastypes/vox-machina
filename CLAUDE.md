@@ -4,7 +4,7 @@
 
 ## Core Identity
 
-vox-machina is a CLI tool that runs entirely on your machine. It transcribes audio files, identifies who said what, and optionally summarizes the result using a local Ollama model. No cloud APIs at runtime. Two entry points: `vox` (audio) and `machina` (text processing).
+vox-machina is a CLI tool that runs entirely on your machine. It transcribes audio files, identifies who said what, and optionally summarizes the result using a local Ollama model. No cloud APIs at runtime. Two entry points: `vox` (audio + project config) and `machina` (text processing).
 
 It is NOT a real-time transcription tool, not a GUI app, and not a cloud service wrapper.
 
@@ -20,12 +20,14 @@ It is NOT a real-time transcription tool, not a GUI app, and not a cloud service
 ## Current Workflow
 
 ```
-vox transcribe meeting.m4a         # transcribe with speaker labels
-vox config                         # configure default models
+vox transcribe meeting.m4a                   # transcribe with speaker labels
+vox transcribe meeting.m4a --language de     # force language detection
+vox config                                   # configure default models
+vox prepare                                  # download all required models
 
-machina label meeting.md           # interactively assign real names
-machina summarize meeting.md       # produce structured meeting notes
-machina config                     # configure default models
+machina label meeting.md                     # interactively assign real names
+machina summarize meeting.md                 # summarize (picks prompt interactively)
+machina summarize meeting.md --prompt retro  # use a specific prompt template
 ```
 
 ## Design Decisions
@@ -37,7 +39,7 @@ machina config                     # configure default models
 | Summarization | Ollama with qwen3.5:9b | Keeps everything local, user controls model choice |
 | CLI framework | typer + rich + questionary | Clean CLI with interactive prompts where useful |
 | Output format | Markdown only | Simple, readable, feeds into downstream tools |
-| Prompt templates | `.md` files with `{transcript}` placeholder | Easy to customize, version-controllable |
+| Prompt templates | Jinja2 `.md.j2` with template inheritance | Shared rules in base, DRY, easy to customize |
 
 ## Python Standards
 
@@ -78,10 +80,11 @@ machina config                     # configure default models
 
 ```
 src/vox_machina/
-├── vox_app.py          # vox CLI: transcribe, config
-├── machina_app.py      # machina CLI: label, summarize, config
-├── cli.py              # shared CLI helpers (banner, config questionnaire, prompts)
+├── vox_app.py          # vox CLI: transcribe, config, prepare
+├── machina_app.py      # machina CLI: label, summarize
+├── cli.py              # shared CLI helpers (config questionnaire, prompts)
 ├── config.py           # persistent user config (~/.config/vox-machina/)
+├── prepare.py          # model download orchestration
 ├── banner.py           # ASCII art banner
 ├── models.py           # pydantic models: TranscriptSegment, SpeakerSegment, MergedSegment
 ├── transcribe.py       # faster-whisper wrapper (ffmpeg conversion for non-wav)
@@ -89,9 +92,13 @@ src/vox_machina/
 ├── merge.py            # align transcript segments with speaker segments
 ├── format.py           # render merged segments to markdown with speaker labels
 ├── label.py            # speaker label extraction and assignment
-├── summarize.py        # Ollama summarization with prompt templates
+├── summarize.py        # Ollama summarization with Jinja2 prompt templates
 └── prompts/
-    └── meeting_notes.md
+    ├── base.md.j2          # shared rules (Jinja2 base template)
+    ├── meeting_notes.md.j2 # meeting summary format
+    ├── standup.md.j2       # standup/status update format
+    ├── interview.md.j2     # interview summary format
+    └── retro.md.j2         # personal retrospective format
 
 tests/
 ├── test_cli.py
@@ -105,4 +112,4 @@ tests/
 
 ## Related Documents
 
-- [Roadmap](./notes/roadmap.md) - implementation plans for v0.8.0 through v0.10.0
+- [Roadmap](./notes/roadmap.md) - implementation plans for v0.9.0 through v0.11.0

@@ -4,173 +4,11 @@
 
 Each slice is independently useful and ends with passing tests, lint, and a commit.
 
-| Slice | Version | What it delivers | Status |
-|-------|---------|-----------------|--------|
-| Skateboard | v0.2.0 | `vox transcribe file.m4a` produces timestamped transcript | Done |
-| Scooter | v0.3.0 | Adds speaker diarization (SPEAKER_00, SPEAKER_01, ...) | Done |
-| Bicycle | v0.4.0 | `vox rename` for interactive speaker label replacement | Done |
-| Motorcycle | v0.5.0 | `vox summarize` via local Ollama with prompt templates | Done |
-| Polish | v0.6.0 | ASCII banner, config questionnaire, polished rich UX | Done |
-| Split CLI | v0.7.0 | `vox` for audio, `machina` for text processing | |
-| Summaries+ | v0.8.0 | Multiple prompt templates + chunked summarization for long recordings | |
-| Obsidian | v0.9.0 | Obsidian-ready output with frontmatter, tags, wikilinks | |
-| Backends | v0.10.0 | Alternative model backends (MLX, other providers) | |
-
-
----
-
-## v0.7.0: Split CLI (`vox` + `machina`)
-
-**Goal:** Split the CLI into two entry points that mirror the project name: `vox` for audio operations, `machina` for text processing.
-
-**Prerequisite:** v0.6.0 complete
-
-**What this delivers:**
-
-```
-vox transcribe meeting.m4a         # audio -> text (voice)
-machina rename meeting.md          # text processing (machine)
-machina summarize meeting.md       # text processing (machine)
-```
-
-**Key design decisions:**
-- Two separate entry points in `pyproject.toml` (`vox` and `machina`)
-- Shared internals, just different CLI surfaces
-- Each command is self-contained and discoverable via `--help`
-- Opens the door for users to install only the part they need (future: optional dependency groups)
-
-- [ ] **Step 1: Create separate typer apps for vox and machina**
-- [ ] **Step 2: Move rename and summarize to machina app**
-- [ ] **Step 3: Add machina entry point to pyproject.toml**
-- [ ] **Step 4: Update tests**
-- [ ] **Step 5: Run full test suite + lint**
-- [ ] **Step 6: Commit**
-
----
-
-## v0.8.0: Summaries+ (Multiple Templates + Chunked Summarization)
-
-**Goal:** Ship built-in prompt templates for common scenarios (standups, interviews) and handle long recordings via chunked summarization so users never hit context window limits.
-
-**Prerequisite:** v0.7.0 complete
-
----
-
-### Task 8.1: Additional Prompt Templates
-
-**Files:**
-- Create: `src/vox_machina/prompts/standup.md`
-- Create: `src/vox_machina/prompts/interview.md`
-- Create: `src/vox_machina/prompts/retro.md`
-- Modify: `src/vox_machina/summarize.py` (add template discovery)
-- Create: `tests/test_prompt_templates.py`
-
-**What this delivers:**
-
-- `vox summarize meeting.md --prompt standup` uses the standup template
-- `vox summarize meeting.md --prompt interview` uses the interview template
-- `vox summarize meeting.md --prompt meeting_notes` stays the default
-- `vox summarize meeting.md --prompt /path/to/custom.md` still works for custom templates
-
-The `--prompt` flag should accept either a built-in template name (without extension) or a file path. The `load_prompt_template()` function needs to be updated to check built-in templates first, then fall back to file path.
-
-**Standup template** should produce:
-- Per-person updates (what they did, what they're doing next)
-- Blockers
-- Action items
-
-**Interview template** should produce:
-- Key insights
-- Notable quotes (with speaker attribution)
-- Themes and patterns
-- Follow-up questions
-
-**Retro template** (personal retrospective, single speaker) should produce:
-- What happened (progress, accomplishments)
-- What's on my mind (thoughts, ideas)
-- Frustrations or blockers
-- Next steps
-- Loose threads (half-formed ideas mentioned in passing)
-
-- [ ] **Step 1: Write failing tests for template discovery**
-- [ ] **Step 2: Run tests to verify they fail**
-- [ ] **Step 3: Create standup.md template**
-- [ ] **Step 4: Create interview.md template**
-- [ ] **Step 5: Update load_prompt_template() to support name-based lookup**
-- [ ] **Step 6: Run tests to verify they pass**
-- [ ] **Step 7: Commit**
-
----
-
-### Task 8.2: Chunked Summarization
-
-**Files:**
-- Create: `src/vox_machina/chunk.py`
-- Modify: `src/vox_machina/summarize.py`
-- Create: `tests/test_chunk.py`
-
-**What this delivers:**
-
-When a transcript exceeds the model's context window, the summarization pipeline automatically:
-
-1. Splits the transcript into chunks that fit within the context window (with some overlap for continuity)
-2. Summarizes each chunk individually using the same prompt template
-3. Runs a final "merge summaries" pass that combines chunk summaries into one cohesive output
-
-The user sees a note in the terminal: `"Transcript is long, summarizing in 4 chunks..."` but the output is a single summary file, same as before.
-
-**Key design decisions:**
-- Chunk boundaries should respect speaker turns (never split mid-sentence or mid-speaker-block)
-- Overlap between chunks (~200 tokens) provides context continuity
-- The merge pass uses a separate internal prompt: "Combine these partial summaries into a single coherent summary"
-- Token estimation: ~4 characters per token (rough but sufficient for deciding chunk size)
-
-- [ ] **Step 1: Write failing tests for chunk splitting logic**
-- [ ] **Step 2: Run tests to verify they fail**
-- [ ] **Step 3: Implement chunk.py (split_transcript, merge_summaries)**
-- [ ] **Step 4: Run tests to verify they pass**
-- [ ] **Step 5: Integrate chunked mode into summarize_transcript()**
-- [ ] **Step 6: Update CLI test to verify chunked mode triggers for long transcripts**
-- [ ] **Step 7: Run full test suite + lint**
-- [ ] **Step 8: Commit**
-
----
-
-### Task 8.3: Prepare Command
-
-**What this delivers:**
-
-A `vox prepare` / `machina prepare` command that downloads all needed models in one go:
-
-1. Runs config questionnaire (if not already configured)
-2. Downloads whisper model
-3. Downloads pyannote diarization model
-4. Verifies ollama model is pulled (or prompts to pull it)
-5. Shows progress bars for each download
-
-First-time users run this after install and they're ready to go.
-
-- [ ] **Step 1: Implement prepare command with download progress**
-- [ ] **Step 2: Add progress bars for model downloads**
-- [ ] **Step 3: Wire into both vox and machina apps**
-- [ ] **Step 4: Tests + lint**
-- [ ] **Step 5: Commit**
-
----
-
-### Task 8.4: Progress Bars
-
-Replace spinners with real progress bars (where possible) for:
-- Model downloads (whisper, pyannote, ollama)
-- Audio transcription (based on duration)
-- Diarization
-- Summarization (streaming response)
-
-Some of these may not be feasible (depends on upstream APIs exposing progress callbacks). Investigate and implement where possible.
-
-- [ ] **Step 1: Investigate progress callback support per operation**
-- [ ] **Step 2: Implement where feasible**
-- [ ] **Step 3: Commit**
+| Slice | Version | What it delivers |
+|-------|---------|-----------------|
+| Obsidian | v0.9.0 | Obsidian-ready output with frontmatter, tags, wikilinks |
+| Resumable | v0.10.0 | Intermediate artifacts + resumable pipeline |
+| Backends | v0.11.0 | Alternative model backends (MLX, other providers) |
 
 ---
 
@@ -231,12 +69,12 @@ tags:
 ...
 ```
 
-After `vox rename`, the speakers list in the frontmatter should also be updated (the rename command already modifies the file, so it should update the frontmatter too).
+After `machina label`, the speakers list in the frontmatter should also be updated (the label command already modifies the file, so it should update the frontmatter too).
 
 **Key design decisions:**
 - Frontmatter is YAML, parsed and written with a lightweight approach (no heavy YAML library needed, the structure is simple and predictable)
 - Tags are auto-generated from the template type (meeting-notes, standup, interview)
-- The `--obsidian` flag works with all commands: `vox transcribe`, `vox rename`, `vox summarize`
+- The `--obsidian` flag works with all commands: `vox transcribe`, `machina label`, `machina summarize`
 - When used with the `/obsidian` skill, formatting conventions from that skill should be followed
 
 - [ ] **Step 1: Write failing tests for obsidian frontmatter generation**
@@ -245,18 +83,49 @@ After `vox rename`, the speakers list in the frontmatter should also be updated 
 - [ ] **Step 4: Run tests to verify they pass**
 - [ ] **Step 5: Wire --obsidian flag into CLI (transcribe command)**
 - [ ] **Step 6: Wire --obsidian flag into CLI (summarize command)**
-- [ ] **Step 7: Update rename command to also update frontmatter speakers list**
+- [ ] **Step 7: Update label command to also update frontmatter speakers list**
 - [ ] **Step 8: Add CLI tests for --obsidian flag**
 - [ ] **Step 9: Run full test suite + lint**
 - [ ] **Step 10: Commit**
 
 ---
 
-## v0.10.0: Alternative Model Backends
+## v0.10.0: Resumable Pipeline
+
+**Goal:** Save intermediate artifacts after each pipeline stage so work isn't lost on failure, and enable resuming from the last successful step.
+
+**Prerequisite:** v0.9.0 complete
+
+**What this delivers:**
+
+Transcription is the most expensive step (minutes of processing). If diarization or formatting fails afterwards, the user currently loses everything. This slice adds:
+
+1. **Intermediate artifact**: Save raw whisper segments as JSON (`meeting.segments.json`) immediately after transcription succeeds
+2. **Resume flag**: `vox transcribe meeting.m4a --resume` skips whisper if segments.json exists, re-runs diarization + merge + format
+3. **Stage-by-stage output**: Each pipeline stage writes its output before the next starts
+
+**Pipeline stages:**
+```
+whisper transcription -> segments.json (saved immediately)
+diarization -> speaker_segments.json (saved)
+merge + format -> meeting.md (final output)
+```
+
+If any stage fails, previous artifacts are preserved and the pipeline can resume.
+
+- [ ] **Step 1: Define intermediate artifact format (JSON schema for segments)**
+- [ ] **Step 2: Save segments.json after transcription**
+- [ ] **Step 3: Implement --resume flag**
+- [ ] **Step 4: Tests**
+- [ ] **Step 5: Commit**
+
+---
+
+## v0.11.0: Alternative Model Backends
 
 **Goal:** Explore alternatives to Ollama for local LLM inference, particularly MLX on Apple Silicon. Ollama adds overhead and requires a separate daemon. Direct MLX integration could be faster and simpler on macOS.
 
-**Prerequisite:** v0.9.0 complete
+**Prerequisite:** v0.10.0 complete
 
 **Areas to investigate:**
 - **Ollama with MLX backend**: Ollama may support MLX natively by this point, which would give us the benefits without code changes
