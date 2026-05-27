@@ -150,6 +150,15 @@ def _prompt_for_speaker_name(speaker: str, quotes: list[str]) -> str | None:
 @app.command()
 def config() -> None:
     """Configure default models for transcription and summarization."""
+    if config_exists():
+        cfg = load_config()
+        console.print("\n[bold]Current configuration:[/bold]")
+        console.print(f"  Whisper model: [bold]{cfg.whisper_model}[/bold]")
+        console.print(f"  Ollama model:  [bold]{cfg.ollama_model}[/bold]")
+        reconfigure = questionary.confirm("\nReconfigure?", default=False).ask()
+        if not reconfigure:
+            return
+
     cfg = _run_config_questionnaire()
     console.print(f"\n  Whisper model: [bold]{cfg.whisper_model}[/bold]")
     console.print(f"  Ollama model:  [bold]{cfg.ollama_model}[/bold]")
