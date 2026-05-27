@@ -5,6 +5,7 @@ import questionary
 import typer
 from rich.console import Console
 
+from vox_machina.banner import print_banner
 from vox_machina.diarize import diarize_audio
 from vox_machina.format import format_transcript_with_speakers
 from vox_machina.merge import merge_segments
@@ -22,6 +23,15 @@ INITIAL_QUOTES = 3
 
 app = typer.Typer(add_completion=False)
 console = Console()
+
+
+@app.callback(invoke_without_command=True)
+def main(ctx: typer.Context) -> None:
+    """vox: local voice transcription with speaker diarization."""
+    print_banner()
+    if ctx.invoked_subcommand is None:
+        console.print("Run [bold]vox --help[/bold] for usage information.")
+        raise typer.Exit(0)
 
 
 def _require_md(file: Path) -> None:
