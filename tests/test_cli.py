@@ -100,7 +100,9 @@ def test_rename_command_non_interactive(tmp_path: Path) -> None:
     )
 
     assert result.exit_code == 0
-    content = transcript_file.read_text()
+    renamed_file = tmp_path / "test_renamed.md"
+    assert renamed_file.exists()
+    content = renamed_file.read_text()
     assert "**Alice**" in content
     assert "**Bob**" in content
     assert "SPEAKER_00" not in content
@@ -121,7 +123,7 @@ def test_summarize_command_creates_summary_file(
     result = runner.invoke(machina_app, ["summarize", str(transcript_file)])
 
     assert result.exit_code == 0
-    summary_file = tmp_path / "meeting-summary.md"
+    summary_file = tmp_path / "meeting_summarized.md"
     assert summary_file.exists()
     content = summary_file.read_text()
     assert "# Summary: meeting.md" in content

@@ -75,7 +75,7 @@ def rename(
             raise typer.Exit(0) from None
 
     result = rename_speakers(transcript, mapping)
-    output_path = output or file
+    output_path = output or file.with_stem(f"{file.stem}_renamed")
     output_path.write_text(result)
     console.print(f"[green]Speakers renamed in {output_path}[/green]")
 
@@ -118,7 +118,7 @@ def summarize(
         f"\n"
     )
 
-    output_path = output or file.with_name(f"{file.stem}-summary.md")
+    output_path = output or file.with_stem(f"{file.stem}_summarized")
     output_path.write_text(header + summary)
     console.print(f"[green]Summary saved to {output_path}[/green]")
 
