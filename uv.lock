@@ -2680,7 +2680,7 @@ wheels = [
 
 [[package]]
 name = "vox-machina"
-version = "0.5.0"
+version = "0.6.0"
 source = { editable = "." }
 dependencies = [
     { name = "faster-whisper" },
