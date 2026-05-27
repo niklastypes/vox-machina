@@ -61,6 +61,7 @@ machina summarize meeting.md       # text processing (machine)
 **Files:**
 - Create: `src/vox_machina/prompts/standup.md`
 - Create: `src/vox_machina/prompts/interview.md`
+- Create: `src/vox_machina/prompts/retro.md`
 - Modify: `src/vox_machina/summarize.py` (add template discovery)
 - Create: `tests/test_prompt_templates.py`
 
@@ -83,6 +84,13 @@ The `--prompt` flag should accept either a built-in template name (without exten
 - Notable quotes (with speaker attribution)
 - Themes and patterns
 - Follow-up questions
+
+**Retro template** (personal retrospective, single speaker) should produce:
+- What happened (progress, accomplishments)
+- What's on my mind (thoughts, ideas)
+- Frustrations or blockers
+- Next steps
+- Loose threads (half-formed ideas mentioned in passing)
 
 - [ ] **Step 1: Write failing tests for template discovery**
 - [ ] **Step 2: Run tests to verify they fail**
@@ -125,6 +133,44 @@ The user sees a note in the terminal: `"Transcript is long, summarizing in 4 chu
 - [ ] **Step 6: Update CLI test to verify chunked mode triggers for long transcripts**
 - [ ] **Step 7: Run full test suite + lint**
 - [ ] **Step 8: Commit**
+
+---
+
+### Task 8.3: Prepare Command
+
+**What this delivers:**
+
+A `vox prepare` / `machina prepare` command that downloads all needed models in one go:
+
+1. Runs config questionnaire (if not already configured)
+2. Downloads whisper model
+3. Downloads pyannote diarization model
+4. Verifies ollama model is pulled (or prompts to pull it)
+5. Shows progress bars for each download
+
+First-time users run this after install and they're ready to go.
+
+- [ ] **Step 1: Implement prepare command with download progress**
+- [ ] **Step 2: Add progress bars for model downloads**
+- [ ] **Step 3: Wire into both vox and machina apps**
+- [ ] **Step 4: Tests + lint**
+- [ ] **Step 5: Commit**
+
+---
+
+### Task 8.4: Progress Bars
+
+Replace spinners with real progress bars (where possible) for:
+- Model downloads (whisper, pyannote, ollama)
+- Audio transcription (based on duration)
+- Diarization
+- Summarization (streaming response)
+
+Some of these may not be feasible (depends on upstream APIs exposing progress callbacks). Investigate and implement where possible.
+
+- [ ] **Step 1: Investigate progress callback support per operation**
+- [ ] **Step 2: Implement where feasible**
+- [ ] **Step 3: Commit**
 
 ---
 
