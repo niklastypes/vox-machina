@@ -71,6 +71,11 @@ To enable automated releases: go to **Settings > Actions > General > Workflow pe
 | Format | `uv run ruff format src/ tests/` |
 | Type check | `uv run ty check src/ tests/` |
 
+## Responsible Use
+
+> [!IMPORTANT]
+> vox-machina processes audio recordings that may contain personal conversations. Please make sure you have the **consent of all recorded parties** before transcribing. Many jurisdictions require explicit consent for recording and transcribing conversations. The speaker diarization model ([pyannote](https://huggingface.co/pyannote/speaker-diarization-community-1)) also requires users to respect its license terms, which include responsible use of speaker identification.
+
 ## License
 
 MIT
