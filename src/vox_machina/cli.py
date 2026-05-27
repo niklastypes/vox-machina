@@ -9,7 +9,7 @@ from vox_machina.diarize import diarize_audio
 from vox_machina.format import format_transcript_with_speakers
 from vox_machina.merge import merge_segments
 from vox_machina.rename import (
-    extract_first_quotes,
+    extract_quotes,
     extract_speakers,
     parse_speaker_mapping,
     rename_speakers,
@@ -17,8 +17,43 @@ from vox_machina.rename import (
 from vox_machina.transcribe import convert_to_wav, transcribe_audio
 
 
+INITIAL_QUOTES = 3
+
 app = typer.Typer(add_completion=False)
 console = Console()
+
+
+def _prompt_for_speaker_name(speaker: str, quotes: list[str]) -> str | None:
+    shown = INITIAL_QUOTES
+    while True:
+        preview = quotes[:shown]
+        lines = [f'  - "{q}"' for q in preview]
+        remaining = len(quotes) - shown
+
+        console.print(f"\n[bold]{speaker}[/bold] said:")
+        for line in lines:
+            console.print(f"[dim]{line}[/dim]")
+
+        if remaining > 0:
+            choice = questionary.select(
+                "Who is this?",
+                choices=[
+                    questionary.Choice("Enter name", value="name"),
+                    questionary.Choice(
+                        f"Show more quotes ({remaining} remaining)", value="more"
+                    ),
+                    questionary.Choice("Skip", value="skip"),
+                ],
+            ).ask()
+
+            if choice == "more":
+                shown += INITIAL_QUOTES
+                continue
+            if choice == "skip":
+                return None
+            return questionary.text("Name:").ask() or None
+        else:
+            return questionary.text("Who is this?").ask() or None
 
 
 @app.command()
@@ -77,13 +112,10 @@ def rename(
             console.print("[yellow]No speaker labels found in transcript.[/yellow]")
             raise typer.Exit(0)
 
-        first_quotes = extract_first_quotes(transcript, detected)
+        all_quotes = extract_quotes(transcript, detected)
         mapping = {}
         for speaker in detected:
-            quote = first_quotes.get(speaker, "(no quote found)")
-            name = questionary.text(
-                f'{speaker} said: "{quote}"\nWho is this?',
-            ).ask()
+            name = _prompt_for_speaker_name(speaker, all_quotes.get(speaker, []))
             if name:
                 mapping[speaker] = name
 
