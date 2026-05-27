@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.0](https://github.com/niklastypes/vox-machina/compare/v0.4.0...v0.5.0) (2026-05-27)
+
+
+### Features
+
+* add Ollama-based transcript summarization with prompt templates ([3a161d6](https://github.com/niklastypes/vox-machina/commit/3a161d69a99b53ff675b16422db557012d42a817))
+* add summarize command to CLI ([aa7eea6](https://github.com/niklastypes/vox-machina/commit/aa7eea60a498aeb8e87a24f7e266574cedc554ba))
+* default summarization model to qwen3.5 ([3a361b7](https://github.com/niklastypes/vox-machina/commit/3a361b7352024020df24676bcf36c9051ed9b0e4))
+* improve summarization prompt for raw transcriptions ([0f5fbd2](https://github.com/niklastypes/vox-machina/commit/0f5fbd2cb0ccdd7e07fd483596d73828e595ee71))
+
+
+### Documentation
+
+* update README.md, CLAUDE.md and roadmap for v0.4.0 ([a9a53ae](https://github.com/niklastypes/vox-machina/commit/a9a53ae5445d131a8accef9183573f153ee2c00c))
+
 ## [0.4.0](https://github.com/niklastypes/vox-machina/compare/v0.3.0...v0.4.0) (2026-05-27)
 
 
