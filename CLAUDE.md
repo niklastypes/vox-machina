@@ -20,7 +20,8 @@ It is NOT a real-time transcription tool, not a GUI app, and not a cloud service
 ## Current Workflow
 
 ```
-vox meeting.m4a                    # transcribe with speaker labels
+vox transcribe meeting.m4a         # transcribe with speaker labels
+vox rename meeting.md              # interactively assign real names
 ```
 
 ## Design Decisions
@@ -28,8 +29,8 @@ vox meeting.m4a                    # transcribe with speaker labels
 | Decision | Choice | Why |
 |----------|--------|-----|
 | Transcription engine | faster-whisper (CTranslate2) | Best local accuracy, good Python API |
-| Diarization | pyannote.audio (community-1) | Fully open model, no HuggingFace token required |
-| CLI framework | typer + rich | Clean CLI with good UX |
+| Diarization | pyannote.audio (community-1) | Fully open model, CC-BY-4.0 license |
+| CLI framework | typer + rich + questionary | Clean CLI with interactive prompts where useful |
 | Output format | Markdown only | Simple, readable, feeds into downstream tools |
 
 ## Python Standards
@@ -71,18 +72,20 @@ vox meeting.m4a                    # transcribe with speaker labels
 
 ```
 src/vox_machina/
-├── cli.py              # typer app: transcribe command
+├── cli.py              # typer app: transcribe, rename commands
 ├── models.py           # pydantic models: TranscriptSegment, SpeakerSegment, MergedSegment
 ├── transcribe.py       # faster-whisper wrapper (ffmpeg conversion for non-wav)
 ├── diarize.py          # pyannote speaker diarization
 ├── merge.py            # align transcript segments with speaker segments
-└── format.py           # render merged segments to markdown with speaker labels
+├── format.py           # render merged segments to markdown with speaker labels
+└── rename.py           # speaker label extraction and replacement
 
 tests/
 ├── test_cli.py
 ├── test_models.py
 ├── test_merge.py
-└── test_format.py
+├── test_format.py
+└── test_rename.py
 ```
 
 ## Related Documents

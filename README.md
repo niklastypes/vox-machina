@@ -7,12 +7,13 @@ Drop in audio, get structured meeting notes. Runs entirely on your machine, no c
 ## How It Works
 
 ```
-vox meeting.m4a                    # transcribe with speaker labels
+vox transcribe meeting.m4a         # transcribe with speaker labels
+vox rename meeting.md              # interactively assign real names
 ```
 
 ## Tech Stack
 
-Python 3.13, faster-whisper, pyannote.audio, typer, Pydantic, rich
+Python 3.13, faster-whisper, pyannote.audio, typer, Pydantic, rich, questionary
 
 ## Roadmap
 
