@@ -185,7 +185,7 @@ def transcribe(
 
     try:
         segments, duration = transcribe_audio(audio_path, model_size=whisper_model)
-        from vox_machina.diarize import diarize_audio
+        from vox_machina.diarize import DIARIZATION_MODEL, diarize_audio
 
         speaker_segments = diarize_audio(audio_path)
         merged = merge_segments(segments, speaker_segments)
@@ -194,6 +194,7 @@ def transcribe(
             source_filename=file.name,
             duration_seconds=duration,
             whisper_model=whisper_model,
+            diarization_model=DIARIZATION_MODEL,
         )
 
         output_path = output or file.with_suffix(".md")

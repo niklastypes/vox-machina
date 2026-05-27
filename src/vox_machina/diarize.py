@@ -1,30 +1,41 @@
 # ruff: noqa: I001, E402
-import io
+import contextlib
 import logging
-import sys
+import os
 import warnings
 
-# Suppress objc duplicate class warnings emitted by pyannote's bundled av
-# library conflicting with system ffmpeg. These are harmless stderr noise
-# from the macOS dynamic linker, not Python warnings.
-_original_stderr = sys.stderr
-sys.stderr = io.StringIO()
 
-from pyannote.audio import Pipeline  # noqa: E402
+@contextlib.contextmanager
+def _suppress_objc_warnings():
+    """Suppress macOS dynamic linker warnings about duplicate AVF classes.
 
-_captured = sys.stderr.getvalue()
-sys.stderr = _original_stderr
-for line in _captured.splitlines():
-    if "objc[" not in line:
-        print(line, file=sys.stderr)  # noqa: T201
+    These warnings are written directly to C-level stderr (fd 2) by the
+    Objective-C runtime, bypassing Python's sys.stderr. We need to redirect
+    the actual file descriptor to suppress them.
+    """
+    devnull = os.open(os.devnull, os.O_WRONLY)
+    original_fd = os.dup(2)
+    os.dup2(devnull, 2)
+    os.close(devnull)
+    try:
+        yield
+    finally:
+        os.dup2(original_fd, 2)
+        os.close(original_fd)
 
-from rich.console import Console  # noqa: E402
-from rich.progress import Progress, SpinnerColumn, TextColumn  # noqa: E402
 
-from vox_machina.models import SpeakerSegment  # noqa: E402
+with _suppress_objc_warnings():
+    from pyannote.audio import Pipeline
+
+from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, TextColumn
+
+from vox_machina.models import SpeakerSegment
 
 
 logger = logging.getLogger(__name__)
+
+DIARIZATION_MODEL = "pyannote/speaker-diarization-community-1"
 
 
 def diarize_audio(audio_path: str) -> list[SpeakerSegment]:
@@ -37,16 +48,17 @@ def diarize_audio(audio_path: str) -> list[SpeakerSegment]:
     console = Console()
 
     try:
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[bold blue]Running speaker diarization..."),
-        ) as progress:
+        with (
+            _suppress_objc_warnings(),
+            Progress(
+                SpinnerColumn(),
+                TextColumn("[bold blue]Running speaker diarization..."),
+            ) as progress,
+        ):
             progress.add_task("diarizing", total=None)
 
             warnings.filterwarnings("ignore", message="std\\(\\): degrees of freedom")
-            pipeline = Pipeline.from_pretrained(
-                "pyannote/speaker-diarization-community-1",
-            )
+            pipeline = Pipeline.from_pretrained(DIARIZATION_MODEL)
             if pipeline is None:
                 msg = "Failed to load pyannote pipeline"
                 raise RuntimeError(msg)

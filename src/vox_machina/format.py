@@ -45,6 +45,7 @@ def format_transcript_with_speakers(
     source_filename: str,
     duration_seconds: float,
     whisper_model: str = "",
+    diarization_model: str = "",
 ) -> str:
     lines: list[str] = [
         f"# Transcript: {source_filename}",
@@ -54,6 +55,8 @@ def format_transcript_with_speakers(
     ]
     if whisper_model:
         lines.append(f"**Whisper model:** {whisper_model}")
+    if diarization_model:
+        lines.append(f"**Diarization model:** {diarization_model}")
     lines.extend(["", "---"])
 
     if _is_multi_speaker(segments):

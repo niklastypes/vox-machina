@@ -119,3 +119,14 @@ def test_whisper_model_omitted_when_empty() -> None:
     )
 
     assert "Whisper model" not in result
+
+
+def test_diarization_model_included_in_header() -> None:
+    result = format_transcript_with_speakers(
+        [],
+        source_filename="test.wav",
+        duration_seconds=0.0,
+        diarization_model="pyannote/speaker-diarization-community-1",
+    )
+
+    assert "**Diarization model:** pyannote/speaker-diarization-community-1" in result
