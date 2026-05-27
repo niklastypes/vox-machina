@@ -1,8 +1,10 @@
-# 🦻 Vox Machina
+<p align="center">
+  <img src="assets/banner.png" alt="Vox Machina" width="450">
+</p>
 
-Local voice transcription with speaker diarization and LLM-powered summarization.
-
-Drop in audio, get structured meeting notes. Runs entirely on your machine, no cloud APIs at runtime.
+<p align="center">
+  Drop in audio, get structured meeting notes. Runs entirely on your machine, no cloud APIs at runtime.
+</p>
 
 ## How It Works
 
