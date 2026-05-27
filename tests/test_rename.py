@@ -1,0 +1,63 @@
+from vox_machina.rename import (
+    extract_first_quotes,
+    extract_speakers,
+    parse_speaker_mapping,
+    rename_speakers,
+)
+
+
+def test_extract_speakers_finds_all_speakers() -> None:
+    transcript = (
+        "**SPEAKER_00** (00:00:01)\nHello\n\n"
+        "**SPEAKER_01** (00:00:04)\nHi there\n\n"
+        "**SPEAKER_00** (00:00:08)\nHow are you?\n"
+    )
+    speakers = extract_speakers(transcript)
+    assert speakers == ["SPEAKER_00", "SPEAKER_01"]
+
+
+def test_extract_speakers_returns_empty_for_no_speakers() -> None:
+    transcript = "Just some text without speakers."
+    assert extract_speakers(transcript) == []
+
+
+def test_rename_speakers_replaces_all_occurrences() -> None:
+    transcript = (
+        "**SPEAKER_00** (00:00:01)\nHello\n\n"
+        "**SPEAKER_01** (00:00:04)\nHi\n\n"
+        "**SPEAKER_00** (00:00:08)\nBye\n"
+    )
+    mapping = {"SPEAKER_00": "Niklas", "SPEAKER_01": "Alex"}
+    result = rename_speakers(transcript, mapping)
+
+    assert "**Niklas**" in result
+    assert "**Alex**" in result
+    assert "SPEAKER_00" not in result
+    assert "SPEAKER_01" not in result
+
+
+def test_rename_speakers_preserves_unmapped_speakers() -> None:
+    transcript = "**SPEAKER_00** (00:00:01)\nHello\n\n**SPEAKER_01** (00:00:04)\nHi\n"
+    mapping = {"SPEAKER_00": "Niklas"}
+    result = rename_speakers(transcript, mapping)
+
+    assert "**Niklas**" in result
+    assert "**SPEAKER_01**" in result
+
+
+def test_parse_speaker_mapping() -> None:
+    raw = "SPEAKER_00=Niklas,SPEAKER_01=Alex"
+    result = parse_speaker_mapping(raw)
+    assert result == {"SPEAKER_00": "Niklas", "SPEAKER_01": "Alex"}
+
+
+def test_extract_first_quotes() -> None:
+    transcript = (
+        "**SPEAKER_00** (00:00:01)\nFirst thing\n\n"
+        "**SPEAKER_01** (00:00:04)\nAnother thing\n\n"
+        "**SPEAKER_00** (00:00:08)\nSecond thing\n"
+    )
+    speakers = extract_speakers(transcript)
+    first_quotes = extract_first_quotes(transcript, speakers)
+    assert first_quotes["SPEAKER_00"] == "First thing"
+    assert first_quotes["SPEAKER_01"] == "Another thing"
