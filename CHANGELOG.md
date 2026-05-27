@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.8.0](https://github.com/niklastypes/vox-machina/compare/v0.7.0...v0.8.0) (2026-05-27)
+
+
+### Features
+
+* add --language flag to transcribe command ([876cf0c](https://github.com/niklastypes/vox-machina/commit/876cf0c934c3185e5cb19517d5b8190b17479f8d))
+* add one-liner descriptions to prompt templates ([a1def25](https://github.com/niklastypes/vox-machina/commit/a1def25133a9128eaaff176798dcb65090caa931))
+* add prepare command to download all required models ([09969a0](https://github.com/niklastypes/vox-machina/commit/09969a01c8ac0621d17220ce54eb84d9ea6da90d))
+* add shared Jinja2 base template for prompt rules ([e3c6ee1](https://github.com/niklastypes/vox-machina/commit/e3c6ee11409462ff6a234eece2e897c3786997dd))
+* add standup, interview, and retro prompt templates ([e561fc5](https://github.com/niklastypes/vox-machina/commit/e561fc5388391037934d50e1dc903cd2c673537c))
+* interactive prompt selector and list prompts in --help ([0fe9fd5](https://github.com/niklastypes/vox-machina/commit/0fe9fd5b0a671d017d019ad9c59fa47f4d964591))
+* name-based prompt template discovery ([5ebdd94](https://github.com/niklastypes/vox-machina/commit/5ebdd94e7c702c06e7da8cea8ea5a4a6d124b339))
+
+
+### Bug Fixes
+
+* show ASCII banner on --help and all CLI invocations ([d2651e7](https://github.com/niklastypes/vox-machina/commit/d2651e7bbe9d6634caad7e0198ac0f534dc4b88b))
+
+
+### Documentation
+
+* add banner image to README ([609a759](https://github.com/niklastypes/vox-machina/commit/609a759c508a34489f264b85b354d29aad007987))
+* add model sizing guide to README ([f83045c](https://github.com/niklastypes/vox-machina/commit/f83045c92f6a30de7586e19e8c1bc708367ce5a8))
+* update README.md, CLAUDE.md and roadmap for v0.8.0 ([b546a6d](https://github.com/niklastypes/vox-machina/commit/b546a6dc73df780225b224bc57725b7f417717d0))
+
 ## [0.7.0](https://github.com/niklastypes/vox-machina/compare/v0.6.0...v0.7.0) (2026-05-27)
 
 
