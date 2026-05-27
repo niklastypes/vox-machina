@@ -4,9 +4,7 @@
 
 ## Core Identity
 
-vox-machina is a CLI tool that runs entirely on your machine. It transcribes audio files, identifies who said what, and optionally summarizes the result using a local Ollama model. No cloud APIs at runtime. Two entry points: `vox` (audio + project config) and `machina` (text processing).
-
-It is NOT a real-time transcription tool, not a GUI app, and not a cloud service wrapper.
+vox-machina is a focused pipeline tool: audio in, structured markdown artifacts out. Two entry points: `vox` (audio + project config) and `machina` (text processing). Runs entirely on your machine, no cloud APIs at runtime.
 
 ## Quick Reference
 
@@ -29,17 +27,6 @@ machina label meeting.md                     # interactively assign real names
 machina summarize meeting.md                 # summarize (picks prompt interactively)
 machina summarize meeting.md --prompt retro  # use a specific prompt template
 ```
-
-## Design Decisions
-
-| Decision | Choice | Why |
-|----------|--------|-----|
-| Transcription engine | faster-whisper (CTranslate2) | Best local accuracy, good Python API |
-| Diarization | pyannote.audio (community-1) | Fully open model, CC-BY-4.0 license |
-| Summarization | Ollama with qwen3.5:9b | Keeps everything local, user controls model choice |
-| CLI framework | typer + rich + questionary | Clean CLI with interactive prompts where useful |
-| Output format | Markdown only | Simple, readable, feeds into downstream tools |
-| Prompt templates | Jinja2 `.md.j2` with template inheritance | Shared rules in base, DRY, easy to customize |
 
 ## Python Standards
 
@@ -112,4 +99,5 @@ tests/
 
 ## Related Documents
 
-- [Roadmap](./notes/roadmap.md) - implementation plans for v0.9.0 through v0.11.0
+- [Architecture](./docs/architecture.md) - pipeline stages, CLI split, data models, design decisions
+- [Roadmap](./notes/roadmap.md) - implementation plans for v0.9.0 through v0.14.0
