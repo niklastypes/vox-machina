@@ -1,14 +1,14 @@
 """machina CLI: AI-powered text processing for transcripts."""
 
+import sys
 from datetime import date
 from pathlib import Path
 from typing import Annotated
 
 import typer
 
+from vox_machina.banner import print_banner
 from vox_machina.cli import (
-    banner_callback,
-    config_command,
     console,
     ensure_config,
     prompt_for_speaker_name,
@@ -29,7 +29,9 @@ app = typer.Typer(add_completion=False)
 @app.callback(invoke_without_command=True)
 def main(ctx: typer.Context) -> None:
     """machina: AI-powered summarization and text processing."""
-    banner_callback(ctx, "machina")
+    if ctx.invoked_subcommand is None:
+        console.print("Run [bold]machina --help[/bold] for usage information.")
+        raise typer.Exit(0)
 
 
 @app.command()
@@ -121,16 +123,7 @@ def summarize(
     console.print(f"[green]Summary saved to {output_path}[/green]")
 
 
-@app.command()
-def config() -> None:
-    """Configure default models for transcription and summarization."""
-    config_command()
-
-
-@app.command()
-def prepare() -> None:
-    """Download all required models (whisper, diarization, ollama)."""
-    from vox_machina.prepare import prepare_all
-
-    cfg = ensure_config()
-    prepare_all(cfg)
+def main_with_banner() -> None:
+    """Entry point that prints the banner before running the app."""
+    print_banner()
+    app(sys.argv[1:])
