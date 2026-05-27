@@ -23,7 +23,7 @@ def extract_quotes(transcript: str, speakers: list[str]) -> dict[str, list[str]]
     return quotes
 
 
-def rename_speakers(transcript: str, mapping: dict[str, str]) -> str:
+def label_speakers(transcript: str, mapping: dict[str, str]) -> str:
     result = transcript
     for old_name, new_name in mapping.items():
         result = result.replace(f"**{old_name}**", f"**{new_name}**")

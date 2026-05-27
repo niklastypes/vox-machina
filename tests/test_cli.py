@@ -81,7 +81,7 @@ def test_transcribe_command_with_diarization(
 # --- machina commands ---
 
 
-def test_rename_command_non_interactive(tmp_path: Path) -> None:
+def test_label_command_non_interactive(tmp_path: Path) -> None:
     transcript_file = tmp_path / "test.md"
     transcript_file.write_text(
         "# Transcript: test.wav\n\n"
@@ -92,7 +92,7 @@ def test_rename_command_non_interactive(tmp_path: Path) -> None:
     result = runner.invoke(
         machina_app,
         [
-            "rename",
+            "label",
             str(transcript_file),
             "--speakers",
             "SPEAKER_00=Alice,SPEAKER_01=Bob",
@@ -100,9 +100,9 @@ def test_rename_command_non_interactive(tmp_path: Path) -> None:
     )
 
     assert result.exit_code == 0
-    renamed_file = tmp_path / "test_renamed.md"
-    assert renamed_file.exists()
-    content = renamed_file.read_text()
+    labeled_file = tmp_path / "test_labeled.md"
+    assert labeled_file.exists()
+    content = labeled_file.read_text()
     assert "**Alice**" in content
     assert "**Bob**" in content
     assert "SPEAKER_00" not in content

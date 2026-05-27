@@ -1,10 +1,10 @@
 import pytest
 
-from vox_machina.rename import (
+from vox_machina.label import (
     extract_quotes,
     extract_speakers,
+    label_speakers,
     parse_speaker_mapping,
-    rename_speakers,
 )
 
 
@@ -23,14 +23,14 @@ def test_extract_speakers_returns_empty_for_no_speakers() -> None:
     assert extract_speakers(transcript) == []
 
 
-def test_rename_speakers_replaces_all_occurrences() -> None:
+def test_label_speakers_replaces_all_occurrences() -> None:
     transcript = (
         "**SPEAKER_00** (00:00:01)\nHello\n\n"
         "**SPEAKER_01** (00:00:04)\nHi\n\n"
         "**SPEAKER_00** (00:00:08)\nBye\n"
     )
     mapping = {"SPEAKER_00": "Alice", "SPEAKER_01": "Bob"}
-    result = rename_speakers(transcript, mapping)
+    result = label_speakers(transcript, mapping)
 
     assert "**Alice**" in result
     assert "**Bob**" in result
@@ -38,10 +38,10 @@ def test_rename_speakers_replaces_all_occurrences() -> None:
     assert "SPEAKER_01" not in result
 
 
-def test_rename_speakers_preserves_unmapped_speakers() -> None:
+def test_label_speakers_preserves_unmapped_speakers() -> None:
     transcript = "**SPEAKER_00** (00:00:01)\nHello\n\n**SPEAKER_01** (00:00:04)\nHi\n"
     mapping = {"SPEAKER_00": "Alice"}
-    result = rename_speakers(transcript, mapping)
+    result = label_speakers(transcript, mapping)
 
     assert "**Alice**" in result
     assert "**SPEAKER_01**" in result

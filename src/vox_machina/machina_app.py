@@ -14,11 +14,11 @@ from vox_machina.cli import (
     prompt_for_speaker_name,
     require_md,
 )
-from vox_machina.rename import (
+from vox_machina.label import (
     extract_quotes,
     extract_speakers,
+    label_speakers,
     parse_speaker_mapping,
-    rename_speakers,
 )
 from vox_machina.summarize import summarize_transcript
 
@@ -33,15 +33,13 @@ def main(ctx: typer.Context) -> None:
 
 
 @app.command()
-def rename(
+def label(
     file: Annotated[Path, typer.Argument(help="Transcript .md file")],
     speakers: Annotated[
         str | None,
         typer.Option(help="Speaker mapping, e.g. 'SPEAKER_00=Alice,SPEAKER_01=Bob'"),
     ] = None,
-    output: Annotated[
-        Path | None, typer.Option(help="Output file path (default: overwrite input)")
-    ] = None,
+    output: Annotated[Path | None, typer.Option(help="Output file path")] = None,
 ) -> None:
     """Replace generic speaker labels with real names."""
     if not file.exists():
@@ -74,10 +72,10 @@ def rename(
             console.print("\n[yellow]Cancelled.[/yellow]")
             raise typer.Exit(0) from None
 
-    result = rename_speakers(transcript, mapping)
-    output_path = output or file.with_stem(f"{file.stem}_renamed")
+    result = label_speakers(transcript, mapping)
+    output_path = output or file.with_stem(f"{file.stem}_labeled")
     output_path.write_text(result)
-    console.print(f"[green]Speakers renamed in {output_path}[/green]")
+    console.print(f"[green]Speakers labeled in {output_path}[/green]")
 
 
 @app.command()
