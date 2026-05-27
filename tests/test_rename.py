@@ -1,5 +1,5 @@
 from vox_machina.rename import (
-    extract_first_quotes,
+    extract_quotes,
     extract_speakers,
     parse_speaker_mapping,
     rename_speakers,
@@ -51,13 +51,13 @@ def test_parse_speaker_mapping() -> None:
     assert result == {"SPEAKER_00": "Niklas", "SPEAKER_01": "Alex"}
 
 
-def test_extract_first_quotes() -> None:
+def test_extract_quotes_returns_all_quotes_per_speaker() -> None:
     transcript = (
         "**SPEAKER_00** (00:00:01)\nFirst thing\n\n"
         "**SPEAKER_01** (00:00:04)\nAnother thing\n\n"
         "**SPEAKER_00** (00:00:08)\nSecond thing\n"
     )
     speakers = extract_speakers(transcript)
-    first_quotes = extract_first_quotes(transcript, speakers)
-    assert first_quotes["SPEAKER_00"] == "First thing"
-    assert first_quotes["SPEAKER_01"] == "Another thing"
+    quotes = extract_quotes(transcript, speakers)
+    assert quotes["SPEAKER_00"] == ["First thing", "Second thing"]
+    assert quotes["SPEAKER_01"] == ["Another thing"]

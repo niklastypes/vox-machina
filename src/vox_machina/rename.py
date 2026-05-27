@@ -13,13 +13,13 @@ def extract_speakers(transcript: str) -> list[str]:
     return ordered
 
 
-def extract_first_quotes(transcript: str, speakers: list[str]) -> dict[str, str]:
-    quotes: dict[str, str] = {}
-    for speaker in speakers:
-        pattern = re.compile(rf"\*\*{re.escape(speaker)}\*\*\s*\([^)]+\)\n(.+)")
-        match = pattern.search(transcript)
-        if match:
-            quotes[speaker] = match.group(1).strip()
+def extract_quotes(transcript: str, speakers: list[str]) -> dict[str, list[str]]:
+    quotes: dict[str, list[str]] = {s: [] for s in speakers}
+    pattern = re.compile(r"\*\*(\w+)\*\*\s*\([^)]+\)\n(.+)")
+    for match in pattern.finditer(transcript):
+        speaker, text = match.group(1), match.group(2).strip()
+        if speaker in quotes:
+            quotes[speaker].append(text)
     return quotes
 
 
