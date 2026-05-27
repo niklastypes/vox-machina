@@ -29,28 +29,28 @@ def test_rename_speakers_replaces_all_occurrences() -> None:
         "**SPEAKER_01** (00:00:04)\nHi\n\n"
         "**SPEAKER_00** (00:00:08)\nBye\n"
     )
-    mapping = {"SPEAKER_00": "Niklas", "SPEAKER_01": "Alex"}
+    mapping = {"SPEAKER_00": "Alice", "SPEAKER_01": "Bob"}
     result = rename_speakers(transcript, mapping)
 
-    assert "**Niklas**" in result
-    assert "**Alex**" in result
+    assert "**Alice**" in result
+    assert "**Bob**" in result
     assert "SPEAKER_00" not in result
     assert "SPEAKER_01" not in result
 
 
 def test_rename_speakers_preserves_unmapped_speakers() -> None:
     transcript = "**SPEAKER_00** (00:00:01)\nHello\n\n**SPEAKER_01** (00:00:04)\nHi\n"
-    mapping = {"SPEAKER_00": "Niklas"}
+    mapping = {"SPEAKER_00": "Alice"}
     result = rename_speakers(transcript, mapping)
 
-    assert "**Niklas**" in result
+    assert "**Alice**" in result
     assert "**SPEAKER_01**" in result
 
 
 def test_parse_speaker_mapping() -> None:
-    raw = "SPEAKER_00=Niklas,SPEAKER_01=Alex"
+    raw = "SPEAKER_00=Alice,SPEAKER_01=Bob"
     result = parse_speaker_mapping(raw)
-    assert result == {"SPEAKER_00": "Niklas", "SPEAKER_01": "Alex"}
+    assert result == {"SPEAKER_00": "Alice", "SPEAKER_01": "Bob"}
 
 
 def test_extract_quotes_returns_all_quotes_per_speaker() -> None:

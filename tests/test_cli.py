@@ -95,14 +95,14 @@ def test_rename_command_non_interactive(tmp_path: Path) -> None:
             "rename",
             str(transcript_file),
             "--speakers",
-            "SPEAKER_00=Niklas,SPEAKER_01=Alex",
+            "SPEAKER_00=Alice,SPEAKER_01=Bob",
         ],
     )
 
     assert result.exit_code == 0
     content = transcript_file.read_text()
-    assert "**Niklas**" in content
-    assert "**Alex**" in content
+    assert "**Alice**" in content
+    assert "**Bob**" in content
     assert "SPEAKER_00" not in content
 
 

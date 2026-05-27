@@ -37,7 +37,7 @@ def rename(
     file: Annotated[Path, typer.Argument(help="Transcript .md file")],
     speakers: Annotated[
         str | None,
-        typer.Option(help="Speaker mapping, e.g. 'SPEAKER_00=Niklas,SPEAKER_01=Alex'"),
+        typer.Option(help="Speaker mapping, e.g. 'SPEAKER_00=Alice,SPEAKER_01=Bob'"),
     ] = None,
     output: Annotated[
         Path | None, typer.Option(help="Output file path (default: overwrite input)")
