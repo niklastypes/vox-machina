@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.6.0](https://github.com/niklastypes/vox-machina/compare/v0.5.0...v0.6.0) (2026-05-27)
+
+
+### Features
+
+* add config module for persistent user settings ([2b7460e](https://github.com/niklastypes/vox-machina/commit/2b7460ea7a2944bf320d59527661fbbb5f03d789))
+* add vox config command and wire config into transcribe/summarize ([4400419](https://github.com/niklastypes/vox-machina/commit/4400419bca9a73f2d4038985452d4bff71b1f7c7))
+* add VOX MACHINA ASCII banner on CLI startup ([68e05ac](https://github.com/niklastypes/vox-machina/commit/68e05ac62380e581a5cc810742f7e04c88b362a3))
+* include diarization model in transcript metadata ([80f06ec](https://github.com/niklastypes/vox-machina/commit/80f06ec72aade88d1d8ad01953ac000ed5232453))
+* include model and prompt in summary metadata header ([872a4b2](https://github.com/niklastypes/vox-machina/commit/872a4b299e1a51893f0c29c067b812fc6480ffd0))
+* include whisper model in transcript metadata ([710af22](https://github.com/niklastypes/vox-machina/commit/710af22e981be072e50c87205359dbb7879f9876))
+* show current config and confirm before reconfiguring ([855c653](https://github.com/niklastypes/vox-machina/commit/855c6538124d6ac3c71b1994f91f526963f10e12))
+
+
+### Bug Fixes
+
+* suppress objc and pytorch warnings during diarization ([62cc121](https://github.com/niklastypes/vox-machina/commit/62cc1212aef777876126de598a2b1af6ee109a85))
+
+
+### Documentation
+
+* update README.md, CLAUDE.md and roadmap for v0.6.0 ([34de83b](https://github.com/niklastypes/vox-machina/commit/34de83b4c03291d4c3c5bd7218187414f36eaeb6))
+
 ## [0.5.0](https://github.com/niklastypes/vox-machina/compare/v0.4.0...v0.5.0) (2026-05-27)
 
 
