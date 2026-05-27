@@ -4,7 +4,7 @@
 
 ## Core Identity
 
-vox-machina is a CLI tool that runs entirely on your machine. It transcribes audio files, identifies who said what, and optionally summarizes the result using a local Ollama model. No cloud APIs at runtime. The CLI command is `vox`.
+vox-machina is a CLI tool that runs entirely on your machine. It transcribes audio files, identifies who said what, and optionally summarizes the result using a local Ollama model. No cloud APIs at runtime. Two entry points: `vox` (audio) and `machina` (text processing).
 
 It is NOT a real-time transcription tool, not a GUI app, and not a cloud service wrapper.
 
@@ -21,9 +21,11 @@ It is NOT a real-time transcription tool, not a GUI app, and not a cloud service
 
 ```
 vox transcribe meeting.m4a         # transcribe with speaker labels
-vox rename meeting.md              # interactively assign real names
-vox summarize meeting.md           # produce structured meeting notes
 vox config                         # configure default models
+
+machina label meeting.md           # interactively assign real names
+machina summarize meeting.md       # produce structured meeting notes
+machina config                     # configure default models
 ```
 
 ## Design Decisions
@@ -76,7 +78,9 @@ vox config                         # configure default models
 
 ```
 src/vox_machina/
-├── cli.py              # typer app: transcribe, rename, summarize, config commands
+├── vox_app.py          # vox CLI: transcribe, config
+├── machina_app.py      # machina CLI: label, summarize, config
+├── cli.py              # shared CLI helpers (banner, config questionnaire, prompts)
 ├── config.py           # persistent user config (~/.config/vox-machina/)
 ├── banner.py           # ASCII art banner
 ├── models.py           # pydantic models: TranscriptSegment, SpeakerSegment, MergedSegment
@@ -84,7 +88,7 @@ src/vox_machina/
 ├── diarize.py          # pyannote speaker diarization
 ├── merge.py            # align transcript segments with speaker segments
 ├── format.py           # render merged segments to markdown with speaker labels
-├── rename.py           # speaker label extraction and replacement
+├── label.py            # speaker label extraction and assignment
 ├── summarize.py        # Ollama summarization with prompt templates
 └── prompts/
     └── meeting_notes.md
@@ -95,10 +99,10 @@ tests/
 ├── test_models.py
 ├── test_merge.py
 ├── test_format.py
-├── test_rename.py
+├── test_label.py
 └── test_summarize.py
 ```
 
 ## Related Documents
 
-- [Roadmap](./notes/roadmap.md) - implementation plans for v0.7.0 through v0.10.0
+- [Roadmap](./notes/roadmap.md) - implementation plans for v0.8.0 through v0.10.0
