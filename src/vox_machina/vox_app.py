@@ -70,3 +70,12 @@ def transcribe(
 def config() -> None:
     """Configure default models for transcription and summarization."""
     config_command()
+
+
+@app.command()
+def prepare() -> None:
+    """Download all required models (whisper, diarization, ollama)."""
+    from vox_machina.prepare import prepare_all
+
+    cfg = ensure_config()
+    prepare_all(cfg)
