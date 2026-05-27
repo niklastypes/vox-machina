@@ -9,23 +9,26 @@ Drop in audio, get structured meeting notes. Runs entirely on your machine, no c
 ```
 vox transcribe meeting.m4a         # transcribe with speaker labels
 vox rename meeting.md              # interactively assign real names
+vox summarize meeting.md           # produce structured meeting notes
 ```
 
 ## Tech Stack
 
-Python 3.13, faster-whisper, pyannote.audio, typer, Pydantic, rich, questionary
+Python 3.13, faster-whisper, pyannote.audio, Ollama, typer, Pydantic, rich, questionary
 
 ## Roadmap
 
 | Stage | Version | What it delivers |
 |-------|---------|-----------------|
-| Skateboard | v0.1.0 | `vox file.m4a` produces timestamped transcript |
-| Scooter | v0.2.0 | Adds speaker diarization (SPEAKER_00, SPEAKER_01, ...) |
-| Bicycle | v0.3.0 | `vox rename` for interactive speaker label replacement |
-| Motorcycle | v0.4.0 | `vox summarize` via local Ollama with prompt templates |
-| Polish | v0.5.0 | ASCII banner, polished rich UX throughout |
-| Summaries+ | v0.6.0 | Multiple prompt templates + chunked summarization for long recordings |
-| Obsidian | v0.7.0 | Obsidian-ready output with frontmatter, tags, wikilinks |
+| Skateboard | v0.2.0 | `vox transcribe file.m4a` produces timestamped transcript |
+| Scooter | v0.3.0 | Adds speaker diarization (SPEAKER_00, SPEAKER_01, ...) |
+| Bicycle | v0.4.0 | `vox rename` for interactive speaker label replacement |
+| Motorcycle | v0.5.0 | `vox summarize` via local Ollama with prompt templates |
+| Polish | v0.6.0 | ASCII banner, config questionnaire, polished rich UX |
+| Split CLI | v0.7.0 | `vox` for audio, `machina` for text processing |
+| Summaries+ | v0.8.0 | Multiple prompt templates + chunked summarization for long recordings |
+| Obsidian | v0.9.0 | Obsidian-ready output with frontmatter, tags, wikilinks |
+| Backends | v0.10.0 | Alternative model backends (MLX, other providers) |
 
 ## Prerequisites
 
