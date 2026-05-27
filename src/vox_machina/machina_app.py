@@ -5,6 +5,7 @@ from datetime import date
 from pathlib import Path
 from typing import Annotated
 
+import questionary
 import typer
 
 from vox_machina.banner import print_banner
@@ -20,7 +21,7 @@ from vox_machina.label import (
     label_speakers,
     parse_speaker_mapping,
 )
-from vox_machina.summarize import summarize_transcript
+from vox_machina.summarize import list_builtin_prompts, summarize_transcript
 
 
 app = typer.Typer(add_completion=False)
@@ -88,7 +89,11 @@ def summarize(
     ] = None,
     prompt: Annotated[
         str | None,
-        typer.Option(help="Prompt template name or path (e.g. 'retro', 'standup')"),
+        typer.Option(
+            help="Prompt template: "
+            + ", ".join(list_builtin_prompts())
+            + ", or a file path"
+        ),
     ] = None,
     output: Annotated[Path | None, typer.Option(help="Output file path")] = None,
 ) -> None:
@@ -101,8 +106,25 @@ def summarize(
     cfg = ensure_config()
     ollama_model = model or cfg.ollama_model
 
+    if prompt is None:
+        available = list_builtin_prompts()
+        prompt_name = questionary.select(
+            "Prompt template:",
+            choices=[
+                questionary.Choice(
+                    f"{p} (default)" if p == "meeting_notes" else p,
+                    value=p,
+                )
+                for p in available
+            ],
+            default="meeting_notes",
+        ).ask()
+        if prompt_name is None:
+            raise typer.Exit(0)
+    else:
+        prompt_name = prompt
+
     transcript = file.read_text()
-    prompt_name = prompt or "meeting_notes"
     summary = summarize_transcript(
         transcript, model=ollama_model, prompt_name=prompt_name
     )
