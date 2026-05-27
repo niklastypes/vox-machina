@@ -103,3 +103,19 @@ def test_empty_segments_produces_header_only() -> None:
 
     assert "# Transcript: empty.wav" in result
     assert "**Duration:** 00:00:00" in result
+
+
+def test_whisper_model_included_in_header() -> None:
+    result = format_transcript_with_speakers(
+        [], source_filename="test.wav", duration_seconds=0.0, whisper_model="small"
+    )
+
+    assert "**Whisper model:** small" in result
+
+
+def test_whisper_model_omitted_when_empty() -> None:
+    result = format_transcript_with_speakers(
+        [], source_filename="test.wav", duration_seconds=0.0
+    )
+
+    assert "Whisper model" not in result

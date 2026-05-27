@@ -44,15 +44,17 @@ def format_transcript_with_speakers(
     segments: list[MergedSegment],
     source_filename: str,
     duration_seconds: float,
+    whisper_model: str = "",
 ) -> str:
     lines: list[str] = [
         f"# Transcript: {source_filename}",
         "",
         f"**Date:** {date.today().isoformat()}",
         f"**Duration:** {_format_time(duration_seconds)}",
-        "",
-        "---",
     ]
+    if whisper_model:
+        lines.append(f"**Whisper model:** {whisper_model}")
+    lines.extend(["", "---"])
 
     if _is_multi_speaker(segments):
         grouped = _group_consecutive_speakers(segments)

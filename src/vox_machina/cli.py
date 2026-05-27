@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 from typing import Annotated
 
@@ -188,7 +189,10 @@ def transcribe(
         speaker_segments = diarize_audio(audio_path)
         merged = merge_segments(segments, speaker_segments)
         markdown = format_transcript_with_speakers(
-            merged, source_filename=file.name, duration_seconds=duration
+            merged,
+            source_filename=file.name,
+            duration_seconds=duration,
+            whisper_model=whisper_model,
         )
 
         output_path = output or file.with_suffix(".md")
@@ -268,11 +272,23 @@ def summarize(
     ollama_model = model or cfg.ollama_model
 
     transcript = file.read_text()
+    prompt_name = prompt.stem if prompt else "meeting_notes"
     prompt_path = str(prompt) if prompt else None
     summary = summarize_transcript(
         transcript, model=ollama_model, prompt_path=prompt_path
     )
 
+    header = (
+        f"# Summary: {file.name}\n"
+        f"\n"
+        f"**Date:** {date.today().isoformat()}\n"
+        f"**Model:** {ollama_model}\n"
+        f"**Prompt:** {prompt_name}\n"
+        f"\n"
+        f"---\n"
+        f"\n"
+    )
+
     output_path = output or file.with_name(f"{file.stem}-summary.md")
-    output_path.write_text(summary)
+    output_path.write_text(header + summary)
     console.print(f"[green]Summary saved to {output_path}[/green]")
