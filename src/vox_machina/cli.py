@@ -5,7 +5,6 @@ from pathlib import Path
 import questionary
 from rich.console import Console
 
-from vox_machina.banner import print_banner
 from vox_machina.config import (
     DEFAULT_OLLAMA_MODEL,
     DEFAULT_WHISPER_MODEL,
@@ -20,14 +19,6 @@ INITIAL_QUOTES = 3
 WHISPER_MODELS = ["small", "medium", "large-v3"]
 
 console = Console()
-
-
-def banner_callback(ctx, app_name: str) -> None:
-    """Show banner and help hint when no subcommand is given."""
-    print_banner()
-    if ctx.invoked_subcommand is None:
-        console.print(f"Run [bold]{app_name} --help[/bold] for usage information.")
-        raise SystemExit(0)
 
 
 def require_md(file: Path) -> None:

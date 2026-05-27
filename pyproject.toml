@@ -19,8 +19,8 @@ dependencies = [
 ]
 
 [project.scripts]
-vox = "vox_machina.vox_app:app"
-machina = "vox_machina.machina_app:app"
+vox = "vox_machina.vox_app:main_with_banner"
+machina = "vox_machina.machina_app:main_with_banner"
 
 [project.urls]
 Homepage = "https://github.com/niklastypes/vox-machina"
