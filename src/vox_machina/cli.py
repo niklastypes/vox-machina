@@ -23,6 +23,12 @@ app = typer.Typer(add_completion=False)
 console = Console()
 
 
+def _require_md(file: Path) -> None:
+    if file.suffix.lower() != ".md":
+        console.print(f"[red]Error: expected a .md file, got {file.suffix}[/red]")
+        raise typer.Exit(1)
+
+
 def _prompt_for_speaker_name(speaker: str, quotes: list[str]) -> str | None:
     shown = INITIAL_QUOTES
     while True:
@@ -102,6 +108,7 @@ def rename(
         console.print(f"[red]Error: file not found: {file}[/red]")
         raise typer.Exit(1)
 
+    _require_md(file)
     transcript = file.read_text()
 
     if speakers:
