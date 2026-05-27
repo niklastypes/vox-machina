@@ -22,7 +22,7 @@ def verify_model_available(model: str) -> None:
     console = Console()
     try:
         response = ollama.list()
-        available = [m.model for m in response.models]
+        available = [m.model for m in response.models if m.model]
         # Match both "model:tag" and bare "model" against the requested name
         if not any(model == m or m.startswith(f"{model}:") for m in available):
             console.print(
@@ -41,35 +41,21 @@ def verify_model_available(model: str) -> None:
         raise SystemExit(1) from None
 
 
-def check_context_window(prompt: str, model: str) -> None:
-    """Warn if the prompt is likely too large for the model's context window."""
+def _estimate_num_ctx(prompt: str) -> int:
+    """Estimate required context window size from prompt length."""
     estimated_tokens = len(prompt) // 4
-    try:
-        model_info = ollama.show(model)
-        num_ctx = int(model_info.get("parameters", {}).get("num_ctx", 2048))
-    except Exception:
-        num_ctx = 2048
-
-    if estimated_tokens > num_ctx:
-        console = Console()
-        console.print(
-            f"[yellow]Warning: transcript is ~{estimated_tokens} tokens, "
-            f"but {model}'s context window is {num_ctx} tokens. "
-            f"Consider increasing num_ctx in your Ollama modelfile.[/yellow]"
-        )
+    return max(2048, estimated_tokens + 1024)
 
 
 def summarize_transcript(
     transcript: str,
-    model: str = "llama3.1",
+    model: str = "qwen3.5:9b",
     prompt_path: str | None = None,
 ) -> str:
     verify_model_available(model)
 
     template = load_prompt_template(prompt_path)
     prompt = build_prompt(template, transcript)
-
-    check_context_window(prompt, model)
 
     with Progress(
         SpinnerColumn(),
@@ -79,6 +65,7 @@ def summarize_transcript(
         response = ollama.chat(
             model=model,
             messages=[{"role": "user", "content": prompt}],
+            options={"num_ctx": _estimate_num_ctx(prompt)},
         )
 
-    return response.message.content
+    return response.message.content or ""

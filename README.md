@@ -29,7 +29,8 @@ Python 3.13, faster-whisper, pyannote.audio, typer, Pydantic, rich, questionary
 
 ## Prerequisites
 
-- **ffmpeg** is required for decoding audio formats (m4a, aac, mp3, etc.): `brew install ffmpeg`
+- **ffmpeg** for decoding audio formats (m4a, aac, mp3, etc.): `brew install ffmpeg`
+- **Ollama** for transcript summarization: [ollama.com](https://ollama.com), then pull the default model: `ollama pull qwen3.5:9b`
 
 ## Setup
 

@@ -144,7 +144,7 @@ def rename(
 @app.command()
 def summarize(
     file: Annotated[Path, typer.Argument(help="Transcript .md file to summarize")],
-    model: Annotated[str, typer.Option(help="Ollama model name")] = "llama3.1",
+    model: Annotated[str, typer.Option(help="Ollama model name")] = "qwen3.5:9b",
     prompt: Annotated[
         Path | None, typer.Option(help="Custom prompt template (.md)")
     ] = None,
