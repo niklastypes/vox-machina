@@ -27,7 +27,7 @@ def test_transcribe_command_creates_md_file(
     )
     mock_diarize.return_value = []
 
-    result = runner.invoke(app, [str(audio_file)])
+    result = runner.invoke(app, ["transcribe", str(audio_file)])
 
     assert result.exit_code == 0
     output_file = tmp_path / "test.md"
@@ -60,9 +60,34 @@ def test_transcribe_command_with_diarization(
         SpeakerSegment(start=2.5, end=5.0, speaker="SPEAKER_01"),
     ]
 
-    result = runner.invoke(app, [str(audio_file)])
+    result = runner.invoke(app, ["transcribe", str(audio_file)])
 
     assert result.exit_code == 0
     content = (tmp_path / "meeting.md").read_text()
     assert "SPEAKER_00" in content
     assert "SPEAKER_01" in content
+
+
+def test_rename_command_non_interactive(tmp_path: Path) -> None:
+    transcript_file = tmp_path / "test.md"
+    transcript_file.write_text(
+        "# Transcript: test.wav\n\n"
+        "**SPEAKER_00** (00:00:01)\nHello\n\n"
+        "**SPEAKER_01** (00:00:04)\nHi\n"
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "rename",
+            str(transcript_file),
+            "--speakers",
+            "SPEAKER_00=Niklas,SPEAKER_01=Alex",
+        ],
+    )
+
+    assert result.exit_code == 0
+    content = transcript_file.read_text()
+    assert "**Niklas**" in content
+    assert "**Alex**" in content
+    assert "SPEAKER_00" not in content
