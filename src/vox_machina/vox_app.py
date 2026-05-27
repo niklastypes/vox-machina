@@ -39,6 +39,9 @@ def transcribe(
         str | None,
         typer.Option(help="Language code, e.g. 'de', 'en' (auto-detect if omitted)"),
     ] = None,
+    no_timestamps: Annotated[
+        bool, typer.Option("--no-timestamps", help="Omit timestamps from transcript")
+    ] = False,
 ) -> None:
     """Transcribe an audio file with speaker diarization."""
     if not file.exists():
@@ -65,6 +68,7 @@ def transcribe(
             duration_seconds=duration,
             whisper_model=whisper_model,
             diarization_model=DIARIZATION_MODEL,
+            timestamps=not no_timestamps,
         )
 
         output_path = output or file.with_suffix(".md")

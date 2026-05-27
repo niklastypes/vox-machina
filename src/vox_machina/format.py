@@ -46,6 +46,7 @@ def format_transcript_with_speakers(
     duration_seconds: float,
     whisper_model: str = "",
     diarization_model: str = "",
+    timestamps: bool = True,
 ) -> str:
     lines: list[str] = [
         f"# Transcript: {source_filename}",
@@ -63,12 +64,16 @@ def format_transcript_with_speakers(
         grouped = _group_consecutive_speakers(segments)
         for speaker, start, text in grouped:
             lines.append("")
-            lines.append(f"**{speaker}** ({_format_time(start)})")
+            if timestamps:
+                lines.append(f"**{speaker}** ({_format_time(start)})")
+            else:
+                lines.append(f"**{speaker}**")
             lines.append(text)
     else:
         for seg in segments:
             lines.append("")
-            lines.append(f"({_format_time(seg.start)})")
+            if timestamps:
+                lines.append(f"({_format_time(seg.start)})")
             lines.append(seg.text)
 
     lines.append("")

@@ -130,3 +130,33 @@ def test_diarization_model_included_in_header() -> None:
     )
 
     assert "**Diarization model:** pyannote/speaker-diarization-community-1" in result
+
+
+def test_no_timestamps_single_speaker() -> None:
+    segments = [
+        MergedSegment(start=0.0, end=1.0, text="Hello", speaker="SPEAKER_00"),
+        MergedSegment(start=1.5, end=3.0, text="World", speaker="SPEAKER_00"),
+    ]
+    result = format_transcript_with_speakers(
+        segments, source_filename="test.wav", duration_seconds=3.0, timestamps=False
+    )
+
+    assert "Hello" in result
+    assert "World" in result
+    assert "(00:00:00)" not in result
+    assert "(00:00:01)" not in result
+
+
+def test_no_timestamps_multi_speaker() -> None:
+    segments = [
+        MergedSegment(start=0.0, end=1.0, text="Hello", speaker="SPEAKER_00"),
+        MergedSegment(start=1.0, end=2.0, text="Hi", speaker="SPEAKER_01"),
+    ]
+    result = format_transcript_with_speakers(
+        segments, source_filename="test.wav", duration_seconds=2.0, timestamps=False
+    )
+
+    assert "**SPEAKER_00**" in result
+    assert "**SPEAKER_01**" in result
+    assert "(00:00:00)" not in result
+    assert "(00:00:01)" not in result
