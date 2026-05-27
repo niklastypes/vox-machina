@@ -1,3 +1,5 @@
+import pytest
+
 from vox_machina.rename import (
     extract_quotes,
     extract_speakers,
@@ -61,3 +63,8 @@ def test_extract_quotes_returns_all_quotes_per_speaker() -> None:
     quotes = extract_quotes(transcript, speakers)
     assert quotes["SPEAKER_00"] == ["First thing", "Second thing"]
     assert quotes["SPEAKER_01"] == ["Another thing"]
+
+
+def test_parse_speaker_mapping_rejects_malformed_input() -> None:
+    with pytest.raises(ValueError, match="Invalid speaker mapping"):
+        parse_speaker_mapping("SPEAKER_00")

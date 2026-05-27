@@ -33,6 +33,10 @@ def rename_speakers(transcript: str, mapping: dict[str, str]) -> str:
 def parse_speaker_mapping(raw: str) -> dict[str, str]:
     mapping: dict[str, str] = {}
     for pair in raw.split(","):
-        key, value = pair.strip().split("=", 1)
+        pair = pair.strip()
+        if "=" not in pair:
+            msg = f"Invalid speaker mapping: '{pair}'. Expected format: SPEAKER_00=Name"
+            raise ValueError(msg)
+        key, value = pair.split("=", 1)
         mapping[key.strip()] = value.strip()
     return mapping
