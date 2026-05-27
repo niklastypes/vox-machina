@@ -4,16 +4,20 @@ from unittest.mock import MagicMock, patch
 from typer.testing import CliRunner
 
 from vox_machina.cli import app
+from vox_machina.config import VoxConfig
 
 
 runner = CliRunner()
+_mock_config = VoxConfig()
 
 
+@patch("vox_machina.cli._ensure_config", return_value=_mock_config)
 @patch("vox_machina.cli.diarize_audio")
 @patch("vox_machina.cli.transcribe_audio")
 def test_transcribe_command_creates_md_file(
     mock_transcribe: MagicMock,
     mock_diarize: MagicMock,
+    _mock_cfg: MagicMock,
     tmp_path: Path,
 ) -> None:
     from vox_machina.models import TranscriptSegment
@@ -36,11 +40,13 @@ def test_transcribe_command_creates_md_file(
     assert "Hello world" in content
 
 
+@patch("vox_machina.cli._ensure_config", return_value=_mock_config)
 @patch("vox_machina.cli.diarize_audio")
 @patch("vox_machina.cli.transcribe_audio")
 def test_transcribe_command_with_diarization(
     mock_transcribe: MagicMock,
     mock_diarize: MagicMock,
+    _mock_cfg: MagicMock,
     tmp_path: Path,
 ) -> None:
     from vox_machina.models import SpeakerSegment, TranscriptSegment
@@ -93,9 +99,11 @@ def test_rename_command_non_interactive(tmp_path: Path) -> None:
     assert "SPEAKER_00" not in content
 
 
+@patch("vox_machina.cli._ensure_config", return_value=_mock_config)
 @patch("vox_machina.cli.summarize_transcript")
 def test_summarize_command_creates_summary_file(
     mock_summarize: MagicMock,
+    _mock_cfg: MagicMock,
     tmp_path: Path,
 ) -> None:
     mock_summarize.return_value = "## Summary\nKey topics discussed."
