@@ -14,6 +14,7 @@ from vox_machina.rename import (
     parse_speaker_mapping,
     rename_speakers,
 )
+from vox_machina.summarize import summarize_transcript
 from vox_machina.transcribe import convert_to_wav, transcribe_audio
 
 
@@ -138,3 +139,27 @@ def rename(
     output_path = output or file
     output_path.write_text(result)
     console.print(f"[green]Speakers renamed in {output_path}[/green]")
+
+
+@app.command()
+def summarize(
+    file: Annotated[Path, typer.Argument(help="Transcript .md file to summarize")],
+    model: Annotated[str, typer.Option(help="Ollama model name")] = "llama3.1",
+    prompt: Annotated[
+        Path | None, typer.Option(help="Custom prompt template (.md)")
+    ] = None,
+    output: Annotated[Path | None, typer.Option(help="Output file path")] = None,
+) -> None:
+    """Summarize a transcript using a local Ollama model."""
+    if not file.exists():
+        console.print(f"[red]Error: file not found: {file}[/red]")
+        raise typer.Exit(1)
+
+    _require_md(file)
+    transcript = file.read_text()
+    prompt_path = str(prompt) if prompt else None
+    summary = summarize_transcript(transcript, model=model, prompt_path=prompt_path)
+
+    output_path = output or file.with_name(f"{file.stem}-summary.md")
+    output_path.write_text(summary)
+    console.print(f"[green]Summary saved to {output_path}[/green]")

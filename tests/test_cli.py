@@ -91,3 +91,21 @@ def test_rename_command_non_interactive(tmp_path: Path) -> None:
     assert "**Niklas**" in content
     assert "**Alex**" in content
     assert "SPEAKER_00" not in content
+
+
+@patch("vox_machina.cli.summarize_transcript")
+def test_summarize_command_creates_summary_file(
+    mock_summarize: MagicMock,
+    tmp_path: Path,
+) -> None:
+    mock_summarize.return_value = "## Summary\nKey topics discussed."
+
+    transcript_file = tmp_path / "meeting.md"
+    transcript_file.write_text("# Transcript: meeting.m4a\n\nSome transcript content.")
+
+    result = runner.invoke(app, ["summarize", str(transcript_file)])
+
+    assert result.exit_code == 0
+    summary_file = tmp_path / "meeting-summary.md"
+    assert summary_file.exists()
+    assert "Key topics discussed" in summary_file.read_text()
