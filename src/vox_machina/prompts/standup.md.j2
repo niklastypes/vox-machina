@@ -1,0 +1,13 @@
+{% extends "base.md.j2" %}
+
+{% block context %}a standup or status update meeting{% endblock %}
+
+{% block output_format %}
+For each speaker, list:
+1. **What they did** (since last standup)
+2. **What they're doing next**
+3. **Blockers** (if any)
+
+Then at the end:
+- **Action Items** (tasks mentioned with owners)
+{% endblock %}

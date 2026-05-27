@@ -1,49 +1,69 @@
+import collections.abc
 from importlib.resources import files
 from pathlib import Path
 
 import ollama
+from jinja2 import BaseLoader, Environment, TemplateNotFound
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
+
+
+class _BuiltinPromptLoader(BaseLoader):
+    """Jinja2 loader that reads from the bundled prompts package."""
+
+    def get_source(
+        self, environment: Environment, template: str
+    ) -> tuple[str, str, collections.abc.Callable[[], bool]]:
+        prompts_dir = files("vox_machina.prompts")
+        resource = prompts_dir.joinpath(template)
+        if not resource.is_file():
+            raise TemplateNotFound(template)
+        source = resource.read_text()
+        return source, template, lambda: True
+
+
+_jinja_env = Environment(loader=_BuiltinPromptLoader(), keep_trailing_newline=True)
 
 
 def list_builtin_prompts() -> list[str]:
     """List names of built-in prompt templates (without extension)."""
     prompts_dir = files("vox_machina.prompts")
     return sorted(
-        p.name.removesuffix(".md")
+        p.name.removesuffix(".md.j2")
         for p in prompts_dir.iterdir()  # type: ignore[union-attr]
-        if hasattr(p, "name") and p.name.endswith(".md")
+        if hasattr(p, "name")
+        and p.name.endswith(".md.j2")
+        and not p.name.startswith("base")
     )
 
 
-def load_prompt_template(prompt: str | None = None) -> str:
-    """Load a prompt template by name or file path.
+def render_prompt(prompt: str | None, transcript: str) -> str:
+    """Render a prompt template with the transcript injected.
 
     Resolution order:
     1. None -> default (meeting_notes)
-    2. Built-in name (e.g. "standup") -> bundled template
-    3. File path -> read from disk
+    2. Built-in name (e.g. "standup") -> bundled Jinja2 template
+    3. File path -> read from disk as plain template with {transcript} placeholder
     """
     if prompt is None:
         prompt = "meeting_notes"
 
-    # Try built-in template first
-    builtin = files("vox_machina.prompts").joinpath(f"{prompt}.md")
-    if builtin.is_file():
-        return builtin.read_text()
+    # Try built-in Jinja2 template
+    template_name = f"{prompt}.md.j2"
+    try:
+        template = _jinja_env.get_template(template_name)
+        return template.render(transcript=transcript)
+    except TemplateNotFound:
+        pass
 
-    # Fall back to file path
+    # Fall back to file path (plain template with {transcript} placeholder)
     path = Path(prompt)
     if path.is_file():
-        return path.read_text()
+        return path.read_text().replace("{transcript}", transcript)
 
     available = ", ".join(list_builtin_prompts())
     msg = f"Prompt '{prompt}' not found. Built-in prompts: {available}"
     raise FileNotFoundError(msg)
-
-
-def build_prompt(template: str, transcript: str) -> str:
-    return template.replace("{transcript}", transcript)
 
 
 def verify_model_available(model: str) -> None:
@@ -83,8 +103,7 @@ def summarize_transcript(
 ) -> str:
     verify_model_available(model)
 
-    template = load_prompt_template(prompt_name)
-    prompt = build_prompt(template, transcript)
+    prompt = render_prompt(prompt_name, transcript)
 
     with Progress(
         SpinnerColumn(),

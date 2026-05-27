@@ -3,47 +3,51 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from vox_machina.summarize import (
-    build_prompt,
-    list_builtin_prompts,
-    load_prompt_template,
-)
+from vox_machina.summarize import list_builtin_prompts, render_prompt
 
 
-def test_load_default_prompt_template() -> None:
-    template = load_prompt_template()
-    assert "{transcript}" in template
-    assert "Key Topics" in template
+def test_render_default_prompt() -> None:
+    result = render_prompt(None, "Hello world")
+    assert "Hello world" in result
+    assert "Key Topics" in result
 
 
-def test_load_builtin_by_name() -> None:
-    template = load_prompt_template("standup")
-    assert "{transcript}" in template
-    assert "What they did" in template
+def test_render_builtin_standup() -> None:
+    result = render_prompt("standup", "Some standup text")
+    assert "Some standup text" in result
+    assert "What they did" in result
 
 
-def test_load_builtin_retro() -> None:
-    template = load_prompt_template("retro")
-    assert "{transcript}" in template
-    assert "Loose threads" in template
+def test_render_builtin_retro() -> None:
+    result = render_prompt("retro", "My retro thoughts")
+    assert "My retro thoughts" in result
+    assert "Loose threads" in result
 
 
-def test_load_builtin_interview() -> None:
-    template = load_prompt_template("interview")
-    assert "{transcript}" in template
-    assert "Notable Quotes" in template
+def test_render_builtin_interview() -> None:
+    result = render_prompt("interview", "Interview content")
+    assert "Interview content" in result
+    assert "Notable Quotes" in result
 
 
-def test_load_custom_prompt_by_path(tmp_path: Path) -> None:
+def test_render_shares_base_rules() -> None:
+    """All built-in templates should include the shared base rules."""
+    for name in list_builtin_prompts():
+        result = render_prompt(name, "test")
+        assert "Do not add commentary" in result
+        assert "same language as the transcript" in result
+
+
+def test_render_custom_file(tmp_path: Path) -> None:
     custom = tmp_path / "custom.md"
     custom.write_text("Summarize this: {transcript}")
-    template = load_prompt_template(str(custom))
-    assert template == "Summarize this: {transcript}"
+    result = render_prompt(str(custom), "Hello")
+    assert result == "Summarize this: Hello"
 
 
-def test_load_nonexistent_prompt_raises() -> None:
+def test_render_nonexistent_raises() -> None:
     with pytest.raises(FileNotFoundError, match="not found"):
-        load_prompt_template("nonexistent_prompt")
+        render_prompt("nonexistent_prompt", "text")
 
 
 def test_list_builtin_prompts() -> None:
@@ -52,12 +56,7 @@ def test_list_builtin_prompts() -> None:
     assert "standup" in prompts
     assert "interview" in prompts
     assert "retro" in prompts
-
-
-def test_build_prompt_injects_transcript() -> None:
-    template = "Summary of: {transcript}"
-    result = build_prompt(template, "Hello world conversation")
-    assert result == "Summary of: Hello world conversation"
+    assert "base" not in prompts
 
 
 @patch("vox_machina.summarize.verify_model_available")

@@ -1,0 +1,14 @@
+{% extends "base.md.j2" %}
+
+{% block context %}an interview{% endblock %}
+
+{% block extra_rules %}
+- Preserve the distinction between interviewer and interviewee.
+{% endblock %}
+
+{% block output_format %}
+1. **Key Insights** - main takeaways from the interview
+2. **Notable Quotes** - significant statements worth highlighting (attribute to speaker)
+3. **Themes and Patterns** - recurring topics or threads
+4. **Follow-up Questions** - questions that were raised but not fully answered, or natural follow-ups
+{% endblock %}

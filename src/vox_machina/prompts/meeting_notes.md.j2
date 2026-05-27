@@ -1,0 +1,10 @@
+{% extends "base.md.j2" %}
+
+{% block context %}a meeting{% endblock %}
+
+{% block output_format %}
+1. **Key Topics** - main subjects covered
+2. **Decisions** - anything that was agreed upon (attribute to speaker)
+3. **Action Items** - tasks or next steps (attribute to speaker)
+4. **Open Questions** - unresolved topics or questions raised
+{% endblock %}
