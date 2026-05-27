@@ -21,7 +21,11 @@ from vox_machina.label import (
     label_speakers,
     parse_speaker_mapping,
 )
-from vox_machina.summarize import list_builtin_prompts, summarize_transcript
+from vox_machina.summarize import (
+    PROMPT_DESCRIPTIONS,
+    list_builtin_prompts,
+    summarize_transcript,
+)
 
 
 app = typer.Typer(add_completion=False)
@@ -90,9 +94,11 @@ def summarize(
     prompt: Annotated[
         str | None,
         typer.Option(
-            help="Prompt template: "
-            + ", ".join(list_builtin_prompts())
-            + ", or a file path"
+            help="Prompt template ("
+            + ", ".join(
+                f"{p}: {PROMPT_DESCRIPTIONS.get(p, '')}" for p in list_builtin_prompts()
+            )
+            + ") or a file path"
         ),
     ] = None,
     output: Annotated[Path | None, typer.Option(help="Output file path")] = None,
@@ -112,7 +118,7 @@ def summarize(
             "Prompt template:",
             choices=[
                 questionary.Choice(
-                    f"{p} (default)" if p == "meeting_notes" else p,
+                    f"{p} - {PROMPT_DESCRIPTIONS.get(p, '')}",
                     value=p,
                 )
                 for p in available

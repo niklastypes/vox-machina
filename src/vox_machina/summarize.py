@@ -24,6 +24,13 @@ class _BuiltinPromptLoader(BaseLoader):
 
 _jinja_env = Environment(loader=_BuiltinPromptLoader(), keep_trailing_newline=True)
 
+PROMPT_DESCRIPTIONS: dict[str, str] = {
+    "meeting_notes": "General meeting summary with topics, decisions, and action items",
+    "standup": "Standup/status update with per-person updates and blockers",
+    "interview": "Interview summary with key insights, quotes, and themes",
+    "retro": "Personal retrospective: progress, thoughts, next steps",
+}
+
 
 def list_builtin_prompts() -> list[str]:
     """List names of built-in prompt templates (without extension)."""
