@@ -1,10 +1,27 @@
+# ruff: noqa: I001, E402
+import io
 import logging
+import sys
+import warnings
 
-from pyannote.audio import Pipeline
-from rich.console import Console
-from rich.progress import Progress, SpinnerColumn, TextColumn
+# Suppress objc duplicate class warnings emitted by pyannote's bundled av
+# library conflicting with system ffmpeg. These are harmless stderr noise
+# from the macOS dynamic linker, not Python warnings.
+_original_stderr = sys.stderr
+sys.stderr = io.StringIO()
 
-from vox_machina.models import SpeakerSegment
+from pyannote.audio import Pipeline  # noqa: E402
+
+_captured = sys.stderr.getvalue()
+sys.stderr = _original_stderr
+for line in _captured.splitlines():
+    if "objc[" not in line:
+        print(line, file=sys.stderr)  # noqa: T201
+
+from rich.console import Console  # noqa: E402
+from rich.progress import Progress, SpinnerColumn, TextColumn  # noqa: E402
+
+from vox_machina.models import SpeakerSegment  # noqa: E402
 
 
 logger = logging.getLogger(__name__)
@@ -26,6 +43,7 @@ def diarize_audio(audio_path: str) -> list[SpeakerSegment]:
         ) as progress:
             progress.add_task("diarizing", total=None)
 
+            warnings.filterwarnings("ignore", message="std\\(\\): degrees of freedom")
             pipeline = Pipeline.from_pretrained(
                 "pyannote/speaker-diarization-community-1",
             )
