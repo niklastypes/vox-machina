@@ -51,6 +51,7 @@ def convert_to_wav(audio_path: str) -> str | None:
 def transcribe_audio(
     audio_path: str,
     model_size: str = "large-v3",
+    language: str | None = None,
 ) -> tuple[list[TranscriptSegment], float]:
     """Transcribe audio file and return segments with total duration."""
     with Progress(
@@ -65,7 +66,9 @@ def transcribe_audio(
         TextColumn("[bold blue]Transcribing audio..."),
     ) as progress:
         progress.add_task("transcribing", total=None)
-        raw_segments, info = model.transcribe(audio_path, beam_size=5)
+        raw_segments, info = model.transcribe(
+            audio_path, beam_size=5, language=language
+        )
         segments = [
             TranscriptSegment(start=seg.start, end=seg.end, text=seg.text.strip())
             for seg in raw_segments

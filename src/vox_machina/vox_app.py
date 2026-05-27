@@ -35,6 +35,10 @@ def transcribe(
     model: Annotated[
         str | None, typer.Option(help="Whisper model size (overrides config)")
     ] = None,
+    language: Annotated[
+        str | None,
+        typer.Option(help="Language code, e.g. 'de', 'en' (auto-detect if omitted)"),
+    ] = None,
 ) -> None:
     """Transcribe an audio file with speaker diarization."""
     if not file.exists():
@@ -48,7 +52,9 @@ def transcribe(
     audio_path = tmp_wav or str(file)
 
     try:
-        segments, duration = transcribe_audio(audio_path, model_size=whisper_model)
+        segments, duration = transcribe_audio(
+            audio_path, model_size=whisper_model, language=language
+        )
         from vox_machina.diarize import DIARIZATION_MODEL, diarize_audio
 
         speaker_segments = diarize_audio(audio_path)
