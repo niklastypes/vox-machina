@@ -15,7 +15,6 @@ from vox_machina.config import (
     load_config,
     save_config,
 )
-from vox_machina.diarize import diarize_audio
 from vox_machina.format import format_transcript_with_speakers
 from vox_machina.merge import merge_segments
 from vox_machina.rename import (
@@ -186,6 +185,8 @@ def transcribe(
 
     try:
         segments, duration = transcribe_audio(audio_path, model_size=whisper_model)
+        from vox_machina.diarize import diarize_audio
+
         speaker_segments = diarize_audio(audio_path)
         merged = merge_segments(segments, speaker_segments)
         markdown = format_transcript_with_speakers(

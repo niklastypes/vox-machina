@@ -12,7 +12,7 @@ _mock_config = VoxConfig()
 
 
 @patch("vox_machina.cli._ensure_config", return_value=_mock_config)
-@patch("vox_machina.cli.diarize_audio")
+@patch("vox_machina.diarize.diarize_audio")
 @patch("vox_machina.cli.transcribe_audio")
 def test_transcribe_command_creates_md_file(
     mock_transcribe: MagicMock,
@@ -41,7 +41,7 @@ def test_transcribe_command_creates_md_file(
 
 
 @patch("vox_machina.cli._ensure_config", return_value=_mock_config)
-@patch("vox_machina.cli.diarize_audio")
+@patch("vox_machina.diarize.diarize_audio")
 @patch("vox_machina.cli.transcribe_audio")
 def test_transcribe_command_with_diarization(
     mock_transcribe: MagicMock,
@@ -116,4 +116,8 @@ def test_summarize_command_creates_summary_file(
     assert result.exit_code == 0
     summary_file = tmp_path / "meeting-summary.md"
     assert summary_file.exists()
-    assert "Key topics discussed" in summary_file.read_text()
+    content = summary_file.read_text()
+    assert "# Summary: meeting.md" in content
+    assert "**Model:** qwen3.5:9b" in content
+    assert "**Prompt:** meeting_notes" in content
+    assert "Key topics discussed" in content
