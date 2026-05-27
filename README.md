@@ -20,7 +20,21 @@ Python 3.13, faster-whisper, pyannote.audio, Ollama, typer, Pydantic, rich, ques
 ## Prerequisites
 
 - **ffmpeg** for decoding audio formats (m4a, aac, mp3, etc.): `brew install ffmpeg`
-- **Ollama** for transcript summarization: [ollama.com](https://ollama.com), then pull the default model: `ollama pull qwen3.5:9b`
+- **Ollama** for transcript summarization: [ollama.com](https://ollama.com), then pull a model (see below)
+
+### Choosing an Ollama model
+
+Summarization quality scales with model size. Pick a model that fits your available RAM (total RAM minus ~4GB for OS/apps). Rule of thumb: ~0.6-0.7GB per billion parameters at Q4 quantization.
+
+| Available RAM | Model size | Examples |
+|--------------|------------|----------|
+| ~4-5GB (8GB machines) | 3-4B | `qwen3.5:4b`, `gemma3:4b`, `phi4-mini` |
+| ~12GB (16GB machines) | 7-9B | `qwen3.5:9b` (default), `gemma3:12b`, `mistral:7b` |
+| ~44GB (48GB+ machines) | 27-35B | `qwen3.5:27b`, `gemma4:27b`, `mistral-small:24b` |
+
+```bash
+ollama pull qwen3.5:9b    # or whichever model fits your machine
+```
 
 ## Setup
 
