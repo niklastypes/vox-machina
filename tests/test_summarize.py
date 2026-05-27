@@ -1,7 +1,13 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from vox_machina.summarize import build_prompt, load_prompt_template
+import pytest
+
+from vox_machina.summarize import (
+    build_prompt,
+    list_builtin_prompts,
+    load_prompt_template,
+)
 
 
 def test_load_default_prompt_template() -> None:
@@ -10,11 +16,42 @@ def test_load_default_prompt_template() -> None:
     assert "Key Topics" in template
 
 
-def test_load_custom_prompt_template(tmp_path: Path) -> None:
+def test_load_builtin_by_name() -> None:
+    template = load_prompt_template("standup")
+    assert "{transcript}" in template
+    assert "What they did" in template
+
+
+def test_load_builtin_retro() -> None:
+    template = load_prompt_template("retro")
+    assert "{transcript}" in template
+    assert "Loose threads" in template
+
+
+def test_load_builtin_interview() -> None:
+    template = load_prompt_template("interview")
+    assert "{transcript}" in template
+    assert "Notable Quotes" in template
+
+
+def test_load_custom_prompt_by_path(tmp_path: Path) -> None:
     custom = tmp_path / "custom.md"
     custom.write_text("Summarize this: {transcript}")
     template = load_prompt_template(str(custom))
     assert template == "Summarize this: {transcript}"
+
+
+def test_load_nonexistent_prompt_raises() -> None:
+    with pytest.raises(FileNotFoundError, match="not found"):
+        load_prompt_template("nonexistent_prompt")
+
+
+def test_list_builtin_prompts() -> None:
+    prompts = list_builtin_prompts()
+    assert "meeting_notes" in prompts
+    assert "standup" in prompts
+    assert "interview" in prompts
+    assert "retro" in prompts
 
 
 def test_build_prompt_injects_transcript() -> None:
@@ -45,21 +82,19 @@ def test_summarize_transcript_calls_ollama(
 
 @patch("vox_machina.summarize.verify_model_available")
 @patch("vox_machina.summarize.ollama")
-def test_summarize_transcript_with_custom_prompt(
+def test_summarize_transcript_with_named_prompt(
     mock_ollama: MagicMock,
     _mock_verify: MagicMock,
-    tmp_path: Path,
 ) -> None:
     from vox_machina.summarize import summarize_transcript
 
-    mock_ollama.chat.return_value.message.content = "Custom summary"
-    custom = tmp_path / "custom.md"
-    custom.write_text("Just summarize: {transcript}")
+    mock_ollama.chat.return_value.message.content = "Retro summary"
 
     result = summarize_transcript(
-        "Transcript text", model="qwen3.5:9b", prompt_path=str(custom)
+        "Transcript text", model="qwen3.5:9b", prompt_name="retro"
     )
 
     call_content = mock_ollama.chat.call_args.kwargs["messages"][0]["content"]
-    assert call_content == "Just summarize: Transcript text"
-    assert result == "Custom summary"
+    assert "Transcript text" in call_content
+    assert "Loose threads" in call_content
+    assert result == "Retro summary"

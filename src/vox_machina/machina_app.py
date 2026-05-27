@@ -85,7 +85,8 @@ def summarize(
         str | None, typer.Option(help="Ollama model name (overrides config)")
     ] = None,
     prompt: Annotated[
-        Path | None, typer.Option(help="Custom prompt template (.md)")
+        str | None,
+        typer.Option(help="Prompt template name or path (e.g. 'retro', 'standup')"),
     ] = None,
     output: Annotated[Path | None, typer.Option(help="Output file path")] = None,
 ) -> None:
@@ -99,10 +100,9 @@ def summarize(
     ollama_model = model or cfg.ollama_model
 
     transcript = file.read_text()
-    prompt_name = prompt.stem if prompt else "meeting_notes"
-    prompt_path = str(prompt) if prompt else None
+    prompt_name = prompt or "meeting_notes"
     summary = summarize_transcript(
-        transcript, model=ollama_model, prompt_path=prompt_path
+        transcript, model=ollama_model, prompt_name=prompt_name
     )
 
     header = (

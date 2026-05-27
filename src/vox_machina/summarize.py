@@ -6,11 +6,40 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 
-def load_prompt_template(prompt_path: str | None = None) -> str:
-    if prompt_path:
-        return Path(prompt_path).read_text()
-    default = files("vox_machina.prompts").joinpath("meeting_notes.md")
-    return default.read_text()
+def list_builtin_prompts() -> list[str]:
+    """List names of built-in prompt templates (without extension)."""
+    prompts_dir = files("vox_machina.prompts")
+    return sorted(
+        p.name.removesuffix(".md")
+        for p in prompts_dir.iterdir()  # type: ignore[union-attr]
+        if hasattr(p, "name") and p.name.endswith(".md")
+    )
+
+
+def load_prompt_template(prompt: str | None = None) -> str:
+    """Load a prompt template by name or file path.
+
+    Resolution order:
+    1. None -> default (meeting_notes)
+    2. Built-in name (e.g. "standup") -> bundled template
+    3. File path -> read from disk
+    """
+    if prompt is None:
+        prompt = "meeting_notes"
+
+    # Try built-in template first
+    builtin = files("vox_machina.prompts").joinpath(f"{prompt}.md")
+    if builtin.is_file():
+        return builtin.read_text()
+
+    # Fall back to file path
+    path = Path(prompt)
+    if path.is_file():
+        return path.read_text()
+
+    available = ", ".join(list_builtin_prompts())
+    msg = f"Prompt '{prompt}' not found. Built-in prompts: {available}"
+    raise FileNotFoundError(msg)
 
 
 def build_prompt(template: str, transcript: str) -> str:
@@ -50,11 +79,11 @@ def _estimate_num_ctx(prompt: str) -> int:
 def summarize_transcript(
     transcript: str,
     model: str = "qwen3.5:9b",
-    prompt_path: str | None = None,
+    prompt_name: str | None = None,
 ) -> str:
     verify_model_available(model)
 
-    template = load_prompt_template(prompt_path)
+    template = load_prompt_template(prompt_name)
     prompt = build_prompt(template, transcript)
 
     with Progress(
