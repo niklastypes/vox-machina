@@ -10,6 +10,7 @@ Drop in audio, get structured meeting notes. Runs entirely on your machine, no c
 vox transcribe meeting.m4a         # transcribe with speaker labels
 vox rename meeting.md              # interactively assign real names
 vox summarize meeting.md           # produce structured meeting notes
+vox config                         # configure default models
 ```
 
 ## Tech Stack

@@ -23,6 +23,7 @@ It is NOT a real-time transcription tool, not a GUI app, and not a cloud service
 vox transcribe meeting.m4a         # transcribe with speaker labels
 vox rename meeting.md              # interactively assign real names
 vox summarize meeting.md           # produce structured meeting notes
+vox config                         # configure default models
 ```
 
 ## Design Decisions
@@ -75,7 +76,9 @@ vox summarize meeting.md           # produce structured meeting notes
 
 ```
 src/vox_machina/
-├── cli.py              # typer app: transcribe, rename, summarize commands
+├── cli.py              # typer app: transcribe, rename, summarize, config commands
+├── config.py           # persistent user config (~/.config/vox-machina/)
+├── banner.py           # ASCII art banner
 ├── models.py           # pydantic models: TranscriptSegment, SpeakerSegment, MergedSegment
 ├── transcribe.py       # faster-whisper wrapper (ffmpeg conversion for non-wav)
 ├── diarize.py          # pyannote speaker diarization
@@ -88,6 +91,7 @@ src/vox_machina/
 
 tests/
 ├── test_cli.py
+├── test_config.py
 ├── test_models.py
 ├── test_merge.py
 ├── test_format.py
@@ -97,4 +101,4 @@ tests/
 
 ## Related Documents
 
-- [Roadmap](./notes/roadmap.md) - implementation plans for v0.6.0 through v0.10.0
+- [Roadmap](./notes/roadmap.md) - implementation plans for v0.7.0 through v0.10.0
