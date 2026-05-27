@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.4.0](https://github.com/niklastypes/vox-machina/compare/v0.3.0...v0.4.0) (2026-05-27)
+
+
+### Features
+
+* add interactive speaker rename command ([fb89298](https://github.com/niklastypes/vox-machina/commit/fb89298acba6b7e830c90b4aedf7340c054d392a))
+* add speaker extraction, renaming, and quote preview ([e8db734](https://github.com/niklastypes/vox-machina/commit/e8db734aa55870f3dce7610018315c4c694e2e31))
+* extract all quotes per speaker for richer rename previews ([cc21a75](https://github.com/niklastypes/vox-machina/commit/cc21a755bf39112e590a41ba7e2a2fa9d5c3b971))
+* improved interactive rename with show-more option ([c402c8b](https://github.com/niklastypes/vox-machina/commit/c402c8bd779108aa223dfb3abb1f5d0a4d26d077))
+* validate .md file extension in rename command ([36350f1](https://github.com/niklastypes/vox-machina/commit/36350f1b86b03600a652c0740a906a334c507791))
+
+
+### Bug Fixes
+
+* handle Ctrl+C gracefully during interactive rename ([e9c2ee1](https://github.com/niklastypes/vox-machina/commit/e9c2ee15e736942d7dac02a0cb5aaa491d2259fc))
+* validate speaker mapping format in --speakers flag ([cbd2d59](https://github.com/niklastypes/vox-machina/commit/cbd2d591de137a0faae5c13024b96cfb00d4e99e))
+
+
+### Documentation
+
+* update README.md, CLAUDE.md and roadmap for v0.3.0 ([b114a90](https://github.com/niklastypes/vox-machina/commit/b114a901419fed1093128719fcc64284b9462f35))
+
 ## [0.3.0](https://github.com/niklastypes/vox-machina/compare/v0.2.0...v0.3.0) (2026-05-26)
 
 
