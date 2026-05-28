@@ -18,14 +18,16 @@ vox-machina is a focused pipeline tool: audio in, structured markdown artifacts 
 ## Current Workflow
 
 ```
-vox transcribe meeting.m4a                   # transcribe with speaker labels
-vox transcribe meeting.m4a --language de     # force language detection
-vox config                                   # configure default models
-vox prepare                                  # download all required models
+vox transcribe meeting.m4a                          # transcribe with speaker labels
+vox transcribe meeting.m4a --language de            # force language detection
+vox transcribe meeting.m4a --no-timestamps          # omit timestamps
+vox config                                          # configure default models (incl. Obsidian mode)
+vox prepare                                         # download all required models
 
-machina label meeting.md                     # interactively assign real names
-machina summarize meeting.md                 # summarize (picks prompt interactively)
-machina summarize meeting.md --prompt retro  # use a specific prompt template
+machina label meeting.md                            # interactively assign real names
+machina summarize meeting.md                        # summarize (picks prompt + detail interactively)
+machina summarize meeting.md --prompt retro         # use a specific prompt template
+machina summarize meeting.md --detail detailed      # thorough summary
 ```
 
 ## Python Standards
@@ -80,12 +82,14 @@ src/vox_machina/
 ├── format.py           # render merged segments to markdown with speaker labels
 ├── label.py            # speaker label extraction and assignment
 ├── summarize.py        # Ollama summarization with Jinja2 prompt templates
+├── obsidian.py         # YAML frontmatter generation for Obsidian
 └── prompts/
     ├── base.md.j2          # shared rules (Jinja2 base template)
     ├── meeting_notes.md.j2 # meeting summary format
     ├── standup.md.j2       # standup/status update format
     ├── interview.md.j2     # interview summary format
-    └── retro.md.j2         # personal retrospective format
+    ├── retro.md.j2         # personal retrospective format
+    └── talk.md.j2          # technical talk/presentation format
 
 tests/
 ├── test_cli.py
@@ -94,10 +98,12 @@ tests/
 ├── test_merge.py
 ├── test_format.py
 ├── test_label.py
+├── test_obsidian.py
 └── test_summarize.py
 ```
 
 ## Related Documents
 
 - [Architecture](./docs/architecture.md) - pipeline stages, CLI split, data models, design decisions
-- [Roadmap](./notes/roadmap.md) - implementation plans for v0.9.0 through v0.14.0
+- [Examples](./docs/examples.md) - usage examples including YouTube workflow
+- [Roadmap](./notes/roadmap.md) - implementation plans for v0.10.0 through v0.15.0

@@ -16,7 +16,8 @@ Two CLI entry points, split by domain:
 |---------|-------------|
 | `vox transcribe meeting.m4a` | Transcribe with speaker diarization |
 | `vox transcribe meeting.m4a --language de` | Force language (auto-detects if omitted) |
-| `vox config` | Configure default models |
+| `vox transcribe meeting.m4a --no-timestamps` | Omit timestamps from transcript |
+| `vox config` | Configure default models and Obsidian mode |
 | `vox prepare` | Download all required models |
 
 ### `machina` - text processing and AI
@@ -24,8 +25,9 @@ Two CLI entry points, split by domain:
 | Command | What it does |
 |---------|-------------|
 | `machina label meeting.md` | Interactively assign real names to speakers |
-| `machina summarize meeting.md` | Summarize (picks prompt interactively) |
-| `machina summarize meeting.md --prompt retro` | Summarize with a specific prompt template |
+| `machina summarize meeting.md` | Summarize (picks prompt + detail interactively) |
+| `machina summarize meeting.md --prompt retro` | Use a specific prompt template |
+| `machina summarize meeting.md --detail detailed` | Thorough summary with nuance |
 
 ## Tech Stack
 

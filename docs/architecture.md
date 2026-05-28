@@ -98,6 +98,10 @@ Renders merged segments to markdown. Smart about speaker count:
 - **Single speaker**: per-segment timestamps, no speaker labels (clean for voice memos)
 - **Multiple speakers**: speaker labels with consecutive grouping (clean for meetings)
 
+Options:
+- `--no-timestamps`: omit timestamps for cleaner downstream processing
+- **Obsidian mode** (via config): outputs YAML frontmatter instead of plain markdown headers
+
 Includes metadata in the header: date, duration, whisper model, diarization model.
 
 ### 6. Label (`label.py`)
@@ -111,16 +115,19 @@ Interactive mode shows quotes from each speaker to help identification. Non-inte
 Sends the transcript to a local Ollama model with a Jinja2 prompt template. The prompt system uses template inheritance:
 
 ```
-base.md.j2           (shared rules: no commentary, speaker attribution, same language)
+base.md.j2           (shared rules: no commentary, speaker attribution, same language, detail level)
   ├── meeting_notes.md.j2   (topics, decisions, action items)
   ├── standup.md.j2          (per-person updates, blockers)
   ├── interview.md.j2        (insights, quotes, themes)
-  └── retro.md.j2            (progress, thoughts, next steps)
+  ├── retro.md.j2            (progress, thoughts, next steps)
+  └── talk.md.j2             (thesis, concepts, tools, takeaways)
 ```
+
+The base template accepts a `detail` parameter (`concise` or `detailed`) that adjusts the verbosity instruction across all templates.
 
 Custom templates work via file path with `{transcript}` placeholder.
 
-Context window (`num_ctx`) is set dynamically based on prompt length to avoid silent truncation.
+Context window (`num_ctx`) is set dynamically based on prompt length to avoid silent truncation. Thinking mode is disabled (`think=False`) to ensure models like qwen3.5 put all output into content rather than internal reasoning.
 
 ## Data Models
 
@@ -130,7 +137,7 @@ All structured data uses Pydantic:
 TranscriptSegment(start: float, end: float, text: str)
 SpeakerSegment(start: float, end: float, speaker: str)
 MergedSegment(start: float, end: float, text: str, speaker: str)
-VoxConfig(whisper_model: str, ollama_model: str)
+VoxConfig(whisper_model: str, ollama_model: str, obsidian_mode: bool)
 ```
 
 ## Config
@@ -138,5 +145,14 @@ VoxConfig(whisper_model: str, ollama_model: str)
 Persistent user config lives at `~/.config/vox-machina/config.json`. Stores:
 - Default whisper model (for transcription)
 - Default ollama model (for summarization)
+- Obsidian mode on/off (YAML frontmatter on all outputs)
 
-Created via interactive questionnaire on first use or via `vox config`. CLI `--model` flags always override config defaults.
+Created via interactive questionnaire on first use or via `vox config`. CLI flags always override config defaults.
+
+## Obsidian Mode
+
+When enabled in config, all output artifacts get YAML frontmatter instead of plain markdown headers. This makes them ready to drop into an Obsidian vault.
+
+Transcript frontmatter includes: type, date, duration, source, whisper model, diarization model, speakers, tags.
+
+Summary frontmatter includes the full provenance chain: type, date, source, ollama model, prompt, whisper model, diarization model, tags. Tags are auto-derived from the prompt template name.
