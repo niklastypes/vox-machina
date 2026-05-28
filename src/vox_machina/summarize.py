@@ -29,6 +29,7 @@ PROMPT_DESCRIPTIONS: dict[str, str] = {
     "standup": "Standup/status update with per-person updates and blockers",
     "interview": "Interview summary with key insights, quotes, and themes",
     "retro": "Personal retrospective: progress, thoughts, next steps",
+    "talk": "Technical talk or presentation: thesis, concepts, takeaways",
 }
 
 
