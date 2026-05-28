@@ -1,6 +1,6 @@
 [project]
 name = "vox-machina"
-version = "0.8.0"
+version = "0.9.0"
 description = "🦻 Local voice transcription with speaker diarization and LLM-powered summarization"
 authors = [
     { name = "Niklas Baier" },

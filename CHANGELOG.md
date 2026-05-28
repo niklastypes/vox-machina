@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.9.0](https://github.com/niklastypes/vox-machina/compare/v0.8.0...v0.9.0) (2026-05-28)
+
+
+### Features
+
+* add --detail flag for concise or detailed summaries ([9a01ea9](https://github.com/niklastypes/vox-machina/commit/9a01ea90c3589a6e2935e35c04997f24b8210210))
+* add --no-timestamps flag to transcribe command ([9d76a42](https://github.com/niklastypes/vox-machina/commit/9d76a42ca1a07e9fe7e6c0db0494be0fec858f91))
+* add Obsidian frontmatter generator ([cf3d50f](https://github.com/niklastypes/vox-machina/commit/cf3d50f42520fa905d74e8111d2c20ea0102bebb))
+* add talk prompt template for technical presentations ([a4abe90](https://github.com/niklastypes/vox-machina/commit/a4abe9001d59d4138b5a38dc9a135a72cb533d72))
+* show project version in banner ([e0d5f6f](https://github.com/niklastypes/vox-machina/commit/e0d5f6fddc2e6666d8fba58bed546546eaa1edfa))
+* wire Obsidian mode into config and all output commands ([be4a26a](https://github.com/niklastypes/vox-machina/commit/be4a26a1f165f8935755c36af386e1189078762a))
+
+
+### Bug Fixes
+
+* disable thinking mode for summarization ([9fb348c](https://github.com/niklastypes/vox-machina/commit/9fb348c6d1194a914abb47eee16cacb4d6da1926))
+
+
+### Documentation
+
+* add architecture documentation with pipeline and CLI diagrams ([ffe5b7b](https://github.com/niklastypes/vox-machina/commit/ffe5b7b0c70e73638489093410ad97e9f1a50843))
+* add Library API slice to roadmap (v0.12.0) ([b7a7a04](https://github.com/niklastypes/vox-machina/commit/b7a7a048088e84b6f52b7144aa9f557dad10425f))
+* add usage examples including YouTube workflow ([b7bf96e](https://github.com/niklastypes/vox-machina/commit/b7bf96e239f9ad0953ce0007d2888d17874d8190))
+* update README.md, CLAUDE.md and docs for v0.9.0 ([aa2f172](https://github.com/niklastypes/vox-machina/commit/aa2f1721d4ea7e9b14b24a32c25142c7593b8e5a))
+* update roadmap with full vision and UX research findings ([64880ee](https://github.com/niklastypes/vox-machina/commit/64880eef2c61febc4a73bd97233bba3d49a20dfd))
+
 ## [0.8.0](https://github.com/niklastypes/vox-machina/compare/v0.7.0...v0.8.0) (2026-05-27)
 
 
