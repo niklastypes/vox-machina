@@ -144,5 +144,8 @@ def config_command() -> None:
             return
 
     cfg = run_config_questionnaire()
-    console.print(f"\n  Whisper model: [bold]{cfg.whisper_model}[/bold]")
-    console.print(f"  Ollama model:  [bold]{cfg.ollama_model}[/bold]")
+    console.print(f"\n  Whisper model:  [bold]{cfg.whisper_model}[/bold]")
+    console.print(f"  Ollama model:   [bold]{cfg.ollama_model}[/bold]")
+    console.print(
+        f"  Obsidian mode:  [bold]{'on' if cfg.obsidian_mode else 'off'}[/bold]"
+    )

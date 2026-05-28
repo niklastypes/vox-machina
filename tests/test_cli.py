@@ -121,7 +121,15 @@ def test_summarize_command_creates_summary_file(
     transcript_file.write_text("# Transcript: meeting.m4a\n\nSome transcript content.")
 
     result = runner.invoke(
-        machina_app, ["summarize", str(transcript_file), "--prompt", "meeting_notes"]
+        machina_app,
+        [
+            "summarize",
+            str(transcript_file),
+            "--prompt",
+            "meeting_notes",
+            "--detail",
+            "concise",
+        ],
     )
 
     assert result.exit_code == 0

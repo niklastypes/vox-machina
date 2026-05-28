@@ -15,9 +15,10 @@ vox-machina is a focused pipeline tool. Audio in, structured markdown artifacts 
 | Obsidian | v0.9.0 | Obsidian-ready output with YAML frontmatter |
 | Resumable | v0.10.0 | Intermediate artifacts + resumable pipeline |
 | Pipeline | v0.11.0 | `vox-machina meeting.m4a` chains all stages |
-| Quality | v0.12.0 | Test coverage, error handling, edge cases |
-| UX | v0.13.0 | Model info during stages, progress bars, ETAs |
-| Backends | v0.14.0 | MLX / llama.cpp as alternatives to Ollama |
+| Library API | v0.12.0 | Clean importable Python API, separate logic from CLI |
+| Quality | v0.13.0 | Test coverage, error handling, edge cases |
+| UX | v0.14.0 | Model info during stages, progress bars, ETAs |
+| Backends | v0.15.0 | MLX / llama.cpp as alternatives to Ollama |
 
 ---
 
@@ -165,11 +166,42 @@ All intermediate artifacts are saved along the way (leverages v0.10.0 resumable 
 
 ---
 
-## v0.12.0: Quality
+## v0.12.0: Library API
+
+**Goal:** Make vox-machina importable as a Python library, not just a CLI tool. Separate pure business logic from CLI presentation so other projects can use transcription, diarization, and summarization programmatically.
+
+**Prerequisite:** v0.11.0 complete
+
+**What this delivers:**
+
+```python
+from vox_machina import transcribe, diarize, summarize
+
+segments, duration = transcribe("meeting.wav", model="small")
+speakers = diarize("meeting.wav")
+summary = summarize(transcript, prompt="retro")
+```
+
+**Key changes:**
+- Extract pure functions (no spinners, no console output, no SystemExit) into a clean public API
+- CLI modules become thin wrappers that add progress display and error formatting
+- Explicit `__init__.py` exports for the public API
+- Keep backward compatibility for CLI users (no breaking changes)
+
+- [ ] **Step 1: Define public API surface**
+- [ ] **Step 2: Separate pure logic from CLI presentation in each module**
+- [ ] **Step 3: Add public exports to __init__.py**
+- [ ] **Step 4: Add library usage tests**
+- [ ] **Step 5: Document library API in docs/**
+- [ ] **Step 6: Commit**
+
+---
+
+## v0.13.0: Quality
 
 **Goal:** Harden the codebase for everyday reliability. vox-machina is an open-source MIT-licensed project; it should be exemplary.
 
-**Prerequisite:** v0.11.0 complete
+**Prerequisite:** v0.12.0 complete
 
 **Areas:**
 - Increase test coverage (target: 90%+, especially CLI paths and error handling)
@@ -180,11 +212,11 @@ All intermediate artifacts are saved along the way (leverages v0.10.0 resumable 
 
 ---
 
-## v0.13.0: UX Improvements
+## v0.14.0: UX Improvements
 
 **Goal:** Rich terminal feedback during long-running operations. Users should know what's happening, which models are being used, and roughly how long things will take.
 
-**Prerequisite:** v0.12.0 complete
+**Prerequisite:** v0.13.0 complete
 
 **What this delivers:**
 
@@ -238,11 +270,11 @@ Without calibration, we can still show progress bars (just no upfront ETA).
 
 ---
 
-## v0.14.0: Alternative Model Backends
+## v0.15.0: Alternative Model Backends
 
 **Goal:** Explore alternatives to Ollama for local LLM inference, particularly MLX on Apple Silicon. Ollama adds overhead and requires a separate daemon. Direct MLX integration could be faster and simpler on macOS.
 
-**Prerequisite:** v0.13.0 complete
+**Prerequisite:** v0.14.0 complete
 
 **Areas to investigate:**
 - **Ollama with MLX backend**: Ollama may support MLX natively by this point, which would give us the benefits without code changes

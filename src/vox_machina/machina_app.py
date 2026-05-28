@@ -102,8 +102,8 @@ def summarize(
         ),
     ] = None,
     detail: Annotated[
-        str, typer.Option(help="Level of detail: 'concise' or 'detailed'")
-    ] = "concise",
+        str | None, typer.Option(help="Level of detail: 'concise' or 'detailed'")
+    ] = None,
     output: Annotated[Path | None, typer.Option(help="Output file path")] = None,
 ) -> None:
     """Summarize a transcript using a local Ollama model."""
@@ -132,6 +132,22 @@ def summarize(
             raise typer.Exit(0)
     else:
         prompt_name = prompt
+
+    if detail is None:
+        detail = questionary.select(
+            "Level of detail:",
+            choices=[
+                questionary.Choice(
+                    "concise - bullet points, high-level", value="concise"
+                ),
+                questionary.Choice(
+                    "detailed - thorough, captures nuance", value="detailed"
+                ),
+            ],
+            default="concise",
+        ).ask()
+        if detail is None:
+            raise typer.Exit(0)
 
     transcript = file.read_text()
     summary = summarize_transcript(
