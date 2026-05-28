@@ -1,6 +1,7 @@
 from datetime import date
 
 from vox_machina.models import MergedSegment
+from vox_machina.obsidian import transcript_frontmatter
 
 
 def _format_time(seconds: float) -> str:
@@ -47,18 +48,37 @@ def format_transcript_with_speakers(
     whisper_model: str = "",
     diarization_model: str = "",
     timestamps: bool = True,
+    obsidian_mode: bool = False,
 ) -> str:
-    lines: list[str] = [
-        f"# Transcript: {source_filename}",
-        "",
-        f"**Date:** {date.today().isoformat()}",
-        f"**Duration:** {_format_time(duration_seconds)}",
-    ]
-    if whisper_model:
-        lines.append(f"**Whisper model:** {whisper_model}")
-    if diarization_model:
-        lines.append(f"**Diarization model:** {diarization_model}")
-    lines.extend(["", "---"])
+    duration_str = _format_time(duration_seconds)
+
+    if obsidian_mode:
+        speakers = sorted({seg.speaker for seg in segments} - {"UNKNOWN"})
+        frontmatter = transcript_frontmatter(
+            source_filename=source_filename,
+            duration=duration_str,
+            whisper_model=whisper_model,
+            diarization_model=diarization_model,
+            speakers=speakers or None,
+        )
+        lines: list[str] = [
+            frontmatter,
+            "",
+            f"# Transcript: {source_filename}",
+            "",
+        ]
+    else:
+        lines = [
+            f"# Transcript: {source_filename}",
+            "",
+            f"**Date:** {date.today().isoformat()}",
+            f"**Duration:** {duration_str}",
+        ]
+        if whisper_model:
+            lines.append(f"**Whisper model:** {whisper_model}")
+        if diarization_model:
+            lines.append(f"**Diarization model:** {diarization_model}")
+        lines.extend(["", "---"])
 
     if _is_multi_speaker(segments):
         grouped = _group_consecutive_speakers(segments)

@@ -14,6 +14,7 @@ DEFAULT_OLLAMA_MODEL = "qwen3.5:9b"
 class VoxConfig(BaseModel):
     whisper_model: str = DEFAULT_WHISPER_MODEL
     ollama_model: str = DEFAULT_OLLAMA_MODEL
+    obsidian_mode: bool = False
 
 
 def load_config() -> VoxConfig:

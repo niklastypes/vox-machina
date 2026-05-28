@@ -69,6 +69,7 @@ def transcribe(
             whisper_model=whisper_model,
             diarization_model=DIARIZATION_MODEL,
             timestamps=not no_timestamps,
+            obsidian_mode=cfg.obsidian_mode,
         )
 
         output_path = output or file.with_suffix(".md")

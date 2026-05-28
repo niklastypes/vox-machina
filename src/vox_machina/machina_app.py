@@ -135,16 +135,31 @@ def summarize(
         transcript, model=ollama_model, prompt_name=prompt_name
     )
 
-    header = (
-        f"# Summary: {file.name}\n"
-        f"\n"
-        f"**Date:** {date.today().isoformat()}\n"
-        f"**Model:** {ollama_model}\n"
-        f"**Prompt:** {prompt_name}\n"
-        f"\n"
-        f"---\n"
-        f"\n"
-    )
+    if cfg.obsidian_mode:
+        from vox_machina.diarize import DIARIZATION_MODEL
+        from vox_machina.obsidian import summary_frontmatter
+
+        header = (
+            summary_frontmatter(
+                source_filename=file.name,
+                model=ollama_model,
+                prompt_name=prompt_name,
+                whisper_model=cfg.whisper_model,
+                diarization_model=DIARIZATION_MODEL,
+            )
+            + f"\n\n# Summary: {file.name}\n\n"
+        )
+    else:
+        header = (
+            f"# Summary: {file.name}\n"
+            f"\n"
+            f"**Date:** {date.today().isoformat()}\n"
+            f"**Model:** {ollama_model}\n"
+            f"**Prompt:** {prompt_name}\n"
+            f"\n"
+            f"---\n"
+            f"\n"
+        )
 
     output_path = output or file.with_stem(f"{file.stem}_summarized")
     output_path.write_text(header + summary)

@@ -39,6 +39,8 @@ def summary_frontmatter(
     source_filename: str,
     model: str,
     prompt_name: str,
+    whisper_model: str = "",
+    diarization_model: str = "",
     tags: list[str] | None = None,
 ) -> str:
     """Generate YAML frontmatter for a summary."""
@@ -50,6 +52,10 @@ def summary_frontmatter(
         f"model: {model}",
         f"prompt: {prompt_name}",
     ]
+    if whisper_model:
+        lines.append(f"whisper_model: {whisper_model}")
+    if diarization_model:
+        lines.append(f"diarization_model: {diarization_model}")
     _tags = tags or ["summary", prompt_name.replace("_", "-")]
     lines.append("tags:")
     for t in _tags:

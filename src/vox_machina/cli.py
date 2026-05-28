@@ -74,9 +74,15 @@ def run_config_questionnaire() -> VoxConfig:
         )
         ollama_model = DEFAULT_OLLAMA_MODEL
 
+    obsidian_mode = questionary.confirm(
+        "Enable Obsidian mode? (YAML frontmatter on all outputs)",
+        default=False,
+    ).ask()
+
     config = VoxConfig(
         whisper_model=whisper_model or DEFAULT_WHISPER_MODEL,
         ollama_model=ollama_model or DEFAULT_OLLAMA_MODEL,
+        obsidian_mode=obsidian_mode or False,
     )
     save_config(config)
     console.print("\n[green]Config saved.[/green]")
@@ -128,8 +134,11 @@ def config_command() -> None:
     if config_exists():
         cfg = load_config()
         console.print("\n[bold]Current configuration:[/bold]")
-        console.print(f"  Whisper model: [bold]{cfg.whisper_model}[/bold]")
-        console.print(f"  Ollama model:  [bold]{cfg.ollama_model}[/bold]")
+        console.print(f"  Whisper model:  [bold]{cfg.whisper_model}[/bold]")
+        console.print(f"  Ollama model:   [bold]{cfg.ollama_model}[/bold]")
+        console.print(
+            f"  Obsidian mode:  [bold]{'on' if cfg.obsidian_mode else 'off'}[/bold]"
+        )
         reconfigure = questionary.confirm("\nReconfigure?", default=False).ask()
         if not reconfigure:
             return

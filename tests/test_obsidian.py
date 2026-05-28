@@ -45,6 +45,19 @@ def test_summary_frontmatter_basic() -> None:
     assert "- meeting-notes" in result
 
 
+def test_summary_frontmatter_with_upstream_models() -> None:
+    result = summary_frontmatter(
+        source_filename="meeting.md",
+        model="qwen3.5:9b",
+        prompt_name="meeting_notes",
+        whisper_model="small",
+        diarization_model="pyannote/speaker-diarization-community-1",
+    )
+
+    assert "whisper_model: small" in result
+    assert "diarization_model: pyannote/speaker-diarization-community-1" in result
+
+
 def test_summary_frontmatter_retro_tags() -> None:
     result = summary_frontmatter(
         source_filename="retro.md",
