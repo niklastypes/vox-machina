@@ -38,6 +38,18 @@ def test_render_shares_base_rules() -> None:
         assert "same language as the transcript" in result
 
 
+def test_render_concise_detail() -> None:
+    result = render_prompt("meeting_notes", "test", detail="concise")
+    assert "Be concise" in result
+    assert "Be thorough" not in result
+
+
+def test_render_detailed_detail() -> None:
+    result = render_prompt("meeting_notes", "test", detail="detailed")
+    assert "Be thorough" in result
+    assert "Be concise" not in result
+
+
 def test_render_custom_file(tmp_path: Path) -> None:
     custom = tmp_path / "custom.md"
     custom.write_text("Summarize this: {transcript}")

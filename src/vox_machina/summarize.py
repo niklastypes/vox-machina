@@ -45,7 +45,7 @@ def list_builtin_prompts() -> list[str]:
     )
 
 
-def render_prompt(prompt: str | None, transcript: str) -> str:
+def render_prompt(prompt: str | None, transcript: str, detail: str = "concise") -> str:
     """Render a prompt template with the transcript injected.
 
     Resolution order:
@@ -60,7 +60,7 @@ def render_prompt(prompt: str | None, transcript: str) -> str:
     template_name = f"{prompt}.md.j2"
     try:
         template = _jinja_env.get_template(template_name)
-        return template.render(transcript=transcript)
+        return template.render(transcript=transcript, detail=detail)
     except TemplateNotFound:
         pass
 
@@ -108,10 +108,11 @@ def summarize_transcript(
     transcript: str,
     model: str = "qwen3.5:9b",
     prompt_name: str | None = None,
+    detail: str = "concise",
 ) -> str:
     verify_model_available(model)
 
-    prompt = render_prompt(prompt_name, transcript)
+    prompt = render_prompt(prompt_name, transcript, detail=detail)
 
     with Progress(
         SpinnerColumn(),

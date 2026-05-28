@@ -101,6 +101,9 @@ def summarize(
             + ") or a file path"
         ),
     ] = None,
+    detail: Annotated[
+        str, typer.Option(help="Level of detail: 'concise' or 'detailed'")
+    ] = "concise",
     output: Annotated[Path | None, typer.Option(help="Output file path")] = None,
 ) -> None:
     """Summarize a transcript using a local Ollama model."""
@@ -132,7 +135,7 @@ def summarize(
 
     transcript = file.read_text()
     summary = summarize_transcript(
-        transcript, model=ollama_model, prompt_name=prompt_name
+        transcript, model=ollama_model, prompt_name=prompt_name, detail=detail
     )
 
     if cfg.obsidian_mode:
