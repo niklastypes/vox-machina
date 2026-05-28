@@ -1,5 +1,7 @@
 from rich.console import Console
 
+from vox_machina import __version__
+
 
 VOX_COLOR = "cyan"
 MACHINA_COLOR = "magenta"
@@ -17,7 +19,7 @@ BANNER = f"""
  ██║╚██╔╝██║██╔══██║██║     ██╔══██║██║██║╚██╗██║██╔══██║
  ██║ ╚═╝ ██║██║  ██║╚██████╗██║  ██║██║██║ ╚████║██║  ██║
  ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝[/bold {MACHINA_COLOR}]
- [{VOX_COLOR}]Transcribe. Diarize.[/{VOX_COLOR}] [{MACHINA_COLOR}]Label. Summarize.[/{MACHINA_COLOR}]
+ [{VOX_COLOR}]Transcribe. Diarize.[/{VOX_COLOR}] [{MACHINA_COLOR}]Label. Summarize.[/{MACHINA_COLOR}] [dim]v{__version__}[/dim]
 """
 
 
