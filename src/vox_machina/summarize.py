@@ -122,6 +122,7 @@ def summarize_transcript(
             model=model,
             messages=[{"role": "user", "content": prompt}],
             options={"num_ctx": _estimate_num_ctx(prompt)},
+            think=False,
         )
 
     return response.message.content or ""
